@@ -19,7 +19,7 @@ greenfield work, where nothing exists yet and every unspoken assumption is
 still on the table.
 
 - **One install script** — copies rules, skills, and phase templates into your repo
-- **Grill the idea first** — `/grill-me` interviews you over a design tree until nothing is silently assumed
+- **Grill the idea first** — `/grill-me` interviews you over a design tree until nothing is silently assumed (inspired by [Matt Pocock](https://www.aihero.dev/skills-grill-me))
 - **Agent gathers context** — detailed goal, technical scope, constraints (refuses without them)
 - **Build in phases** — plan → execute → complete, one verifiable layer at a time
 - **Subagents for facts and mechanics** — explorers, reviewers, test runners, and verifiers do the legwork in parallel; the parent keeps design and decisions
