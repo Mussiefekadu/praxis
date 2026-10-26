@@ -1,4 +1,4 @@
-
+# Praxis <!-- omit in toc -->
 
 ## 🧠 Introduction <!-- omit in toc -->
 
@@ -16,7 +16,7 @@ Two entry points, each preceded by the same grill:
 greenfield work, where nothing exists yet and every unspoken assumption is
 still on the table.
 
-- **One install script** — copies rules, subagents, skills, and phase templates into your repo
+- **One plugin install** — skills and subagents ship with the plugin; `/praxis:init` adds rules and phase templates to your repo
 - **Grill the idea first** — `/praxis:grill-me` interviews you over a design tree until nothing is silently assumed (inspired by [Matt Pocock](https://www.aihero.dev/skills-grill-me))
 - **Agent gathers context** — detailed goal, technical scope, constraints (refuses without them)
 - **Build in phases** — plan → execute → complete, one verifiable layer at a time
@@ -54,11 +54,6 @@ stay in the plugin and update with it.
 
 Every skill ends with a **next-step button** (Claude desktop app) instead of
 asking you to type the next command.
-
-<p align="center">
-  <img src=".github/img/turboplan.gif" alt="Installing Praxis" width="600" /><br/>
-  <em>Installing Praxis</em>
-</p>
 
 Then:
 
@@ -163,10 +158,6 @@ Combined with the hub's routing map, the evolving `.claude/rules/*.md` files are
   and architecture narrative aligned with `.claude/rules/` as the project grows.
 
 ## 🌀 Dialectic of Cognition Methodology
-
-<p align="center">
-  <img src=".github/img/mao.png" alt="Dialectic of cognition — section header" width="500" />
-</p>
 
 ### 📣 Motto <!-- omit in toc -->
 
