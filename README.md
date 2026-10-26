@@ -1,6 +1,4 @@
-<div align="center">
-  <img src=".github/img/turboplan.png" alt="Praxis" width="700px">
-</div>
+
 
 ## 🧠 Introduction <!-- omit in toc -->
 
