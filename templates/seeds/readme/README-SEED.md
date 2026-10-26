@@ -7,9 +7,9 @@
 ## Summary
 
 {{2–4_SENTENCES_FOR_HUMANS: what this repo is, who it is for, and what “done” looks like.
-Keep jargon light. Point at Turboplan only if useful.}}
+Keep jargon light. Point at Praxis only if useful.}}
 
-Bootstrapped with **[Turboplan](https://github.com/commoddity/turboplan)** (agent rules + phased delivery).
+Bootstrapped with **[Praxis](https://github.com/Mussiefekadu/praxis)** (agent rules + phased delivery).
 
 ## Table of Contents
 
@@ -19,7 +19,7 @@ Bootstrapped with **[Turboplan](https://github.com/commoddity/turboplan)** (agen
 - [📊 Status](#-status)
 - [📂 Repo layout](#-repo-layout)
 - [📚 Dependencies & docs](#-dependencies--docs)
-- [🔁 Building with Turboplan](#-building-with-turboplan)
+- [🔁 Building with Praxis](#-building-with-praxis)
 - [🔒 Security / invariants](#-security--invariants)
 - [📜 License / attribution](#-license--attribution)
 
@@ -44,7 +44,7 @@ Bootstrapped with **[Turboplan](https://github.com/commoddity/turboplan)** (agen
 
 | Area | State |
 | ---- | ----- |
-| 🧭 Agent rules (`.cursor/rules/`) | Bootstrapped |
+| 🧭 Agent rules (`.claude/rules/`) | Bootstrapped |
 | 📋 MVP plan (`planning/phases/`) | Seeded — see INDEX |
 | 🛠️ Product code | Not started (or note what exists) |
 
@@ -53,8 +53,9 @@ Bootstrapped with **[Turboplan](https://github.com/commoddity/turboplan)** (agen
 | Path | For |
 | ---- | --- |
 | [`README.md`](README.md) | 👤 Humans (this file) |
-| [`.cursor/rules/`](.cursor/rules/) | 📜 Conventions for coding agents |
-| [`.cursor/skills/`](.cursor/skills/) | 🧩 Invocable plan / execute / complete / … |
+| [`.claude/rules/`](.claude/rules/) | 📜 Conventions for coding agents |
+| [`.claude/agents/`](.claude/agents/) | 🤖 Subagent roster (explorer, implementer, …) |
+| Praxis plugin | 🧩 `/praxis:*` plan / execute / complete / … |
 | [`planning/phases/`](planning/phases/) | 🗂️ MVP sequence of record |
 
 <!-- BOOTSTRAP: add cmd/, internal/, packages as they appear. -->
@@ -62,23 +63,23 @@ Bootstrapped with **[Turboplan](https://github.com/commoddity/turboplan)** (agen
 ## 📚 Dependencies & docs
 
 Human-facing summary of major libraries/frameworks. Agents get detail in matching
-`.cursor/rules/*.mdc` spokes — keep both in sync as the project evolves.
+`.claude/rules/*.md` spokes — keep both in sync as the project evolves.
 
 | Dependency | Role | Docs | Agent rules |
 | ---------- | ---- | ---- | ----------- |
-| {{DEP_1}} | {{ROLE}} | {{DOC_URL}} | [`.cursor/rules/{{spoke}}.mdc`](.cursor/rules/{{spoke}}.mdc) |
+| {{DEP_1}} | {{ROLE}} | {{DOC_URL}} | [`.claude/rules/{{spoke}}.md`](.claude/rules/{{spoke}}.md) |
 
-## 🔁 Building with [Turboplan](https://github.com/commoddity/turboplan)
+## 🔁 Building with [Praxis](https://github.com/Mussiefekadu/praxis)
 
 Work proceeds one phase task at a time. Full methodology:
-[github.com/commoddity/turboplan](https://github.com/commoddity/turboplan).
+[github.com/Mussiefekadu/praxis](https://github.com/Mussiefekadu/praxis).
 
 ```
-  📝 /task-1-plan TXX
+  📝 /praxis:plan TXX
         ↓
-  🛠️  /task-2-execute TXX
+  🛠️  /praxis:execute TXX
         ↓
-  ✅ /task-3-complete TXX → push (default) + Manual test → next <stub-stem> branch
+  ✅ /praxis:complete TXX → push (default) + Manual test → next <stub-stem> branch
 ```
 
 See [`planning/phases/INDEX.md`](planning/phases/INDEX.md).

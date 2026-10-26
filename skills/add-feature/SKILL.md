@@ -1,14 +1,14 @@
 ---
-name: setup-tasks
+name: add-feature
 description: >
   Pre-planning step for a new feature or addition to an existing project.
   Gathers context, reads current rules and INDEX, and proposes new
-  phase stubs without rewriting existing infrastructure. Manual only — /setup-tasks.
+  phase stubs without rewriting existing infrastructure. Manual only — /praxis:add-feature.
 disable-model-invocation: true
-allowed-tools: Bash, Read, Grep, Glob, Edit, Write, WebFetch, WebSearch, Task
+allowed-tools: Bash, Read, Grep, Glob, Edit, Write, WebFetch, WebSearch, Agent(praxis:explorer, praxis:web-researcher)
 ---
 
-# /setup-tasks — New feature → context → phase stubs
+# /praxis:add-feature — New feature → context → phase stubs
 
 You add tasks for a new feature, subsystem, or capability expansion in an
 **already-bootstrapped** project. You do **not** rewrite rules,
@@ -24,13 +24,13 @@ appended to INDEX.
 - **Dependencies / libraries** — new frameworks or APIs (each needs a rules spoke)
 - **References** — code, docs, or examples to study
 
-**Context gathering is mandatory.** Same protocol as `/bootstrap-turboplan`:
+**Context gathering is mandatory.** Same protocol as `/praxis:bootstrap`:
 if the human provides a vague one-liner, ask the detailed questions before
 writing tasks. A feature too vaguely described to plan is a feature the human
 hasn't thought through yet — stop and say so.
 
-**Preferred input:** a completed `/grill-me` session. When the human arrives
-from `/grill-me`, the settled decisions in its shared-understanding summary
+**Preferred input:** a completed `/praxis:grill-me` session. When the human arrives
+from `/praxis:grill-me`, the settled decisions in its shared-understanding summary
 answer most context questions already — do not re-ask for information already
 settled there; read the summary (and its decision log) and grill only what it
 left open.
@@ -39,7 +39,7 @@ left open.
 
 ### 1. Read current state
 
-- Read `.cursor/rules/general.mdc` — understand architecture, safety rails, stack
+- Read `.claude/rules/general.md` — understand architecture, safety rails, stack
 - Read `planning/phases/INDEX.md` — know what exists, what's done, what's next
 - Read any relevant domain spokes for the feature area
 - **Delegate codebase exploration to explorer subagents** (one per independent
@@ -72,7 +72,7 @@ Ask the human the same detailed questions as bootstrap:
 If the feature introduces a named library, framework, or external API not yet
 covered by a spoke:
 
-1. Ask the human: "Create a `.cursor/rules/<name>.mdc` spoke for <dep>?"
+1. Ask the human: "Create a `.claude/rules/<name>.md` spoke for <dep>?"
 2. If yes: fetch official docs, write spoke with symptom/cause/fix table skeleton,
    add to hub Routing Map
 3. Mirror in README → Dependencies & docs
@@ -80,7 +80,7 @@ covered by a spoke:
 ### 5. Output
 
 ```
-## /setup-tasks complete — {{FEATURE}}
+## /praxis:add-feature complete — {{FEATURE}}
 
 ### Context gathered
 - Goal: …
@@ -97,8 +97,10 @@ covered by a spoke:
 - Appended after TYY, before (existing next task)
 
 ### First action
-- /task-1-plan TXX
+button → /praxis:plan TXX
 ```
+
+**Next-step button (mandatory):** do not tell the user to type the next command. End the turn with `mcp__ccd_turn__wrap_up` — `recap` = what is now true; `ask` = one short question; `actions[0]` = a reply with `label` "Plan TXX" and `message` `/praxis:plan TXX`. If `wrap_up` is unavailable (not the Claude desktop app), print the command on its own line instead.
 
 ## Do not
 

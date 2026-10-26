@@ -1,25 +1,25 @@
 ---
-name: task-3-complete
+name: complete
 description: >
   Close out one MVP phase task: re-run lint+test verify, dialectic, mark INDEX ✅,
   commit, push branch by default (opt out with --no-push), give manual test
-  commands, checkout next stub-stem branch. Manual only — /task-3-complete TXX [--no-push].
+  commands, checkout next stub-stem branch. Manual only — /praxis:complete TXX [--no-push].
 disable-model-invocation: true
-allowed-tools: Bash, Read, Grep, Glob, Edit, Write, Task
+allowed-tools: Bash, Read, Grep, Glob, Edit, Write, Agent(praxis:doc-writer)
 ---
 
-# /task-3-complete — Close one MVP phase task
+# /praxis:complete — Close one MVP phase task
 
-Run after `/task-2-execute TXX` when acceptance criteria pass. You **do not**
+Run after `/praxis:execute TXX` when acceptance criteria pass. You **do not**
 implement product features here — you re-verify, capture learnings, sync the
 backlog, mark the INDEX complete, **commit**, **push** (unless `--no-push`),
 give the user **manual test** commands, and **start the next task branch**.
 
-Use a **[medium] or [small]** model: medium when substantial execution means
+Use a **medium or small** model: medium when substantial execution means
 significant dialectic learning to encode, small for routine mechanical
 close-outs. Mechanical verify + dialectic triage + git. If dialectic Mode A/B
 looks like a deep novel failure mode, you may recommend the user re-run
-dialectic on a [large] model — do not block close-out on that alone when verify
+dialectic on a large model — do not block close-out on that alone when verify
 is green and AC passed.
 
 > 💡 Model sizing is a **recommendation**, not a hard constraint — run this on
@@ -35,24 +35,24 @@ is green and AC passed.
 Examples:
 
 ```text
-/task-3-complete T04
-/task-3-complete T04 --no-push
+/praxis:complete T04
+/praxis:complete T04 --no-push
 ```
 
 ## Hard constraints
 
-1. Coding learnings only via `/dialectic-of-cognition` → `.cursor/rules/*.mdc`.  
+1. Coding learnings only via `/praxis:learn` → `.claude/rules/*.md`.  
 2. Do not invent downstream scope; only fix stale assumptions in later stubs.  
 3. INDEX completed status is **`✅`** — never write `Done` in the INDEX Status column.  
 4. **Re-run the full lint + test (verify) suite** before marking complete or
    committing. Prefer **`make verify`**. Auto-fix first; remaining lint failures
    block close-out.  
-4a. **Verify tooling presence (hard abort):** Same as `/task-2-execute` — require
+4a. **Verify tooling presence (hard abort):** Same as `/praxis:execute` — require
     root `Makefile` with `verify` (lint+test), stack lint config (Go: `.golangci.yml`),
     and `lefthook.yml` (pre-commit → verify). If missing: **stop** — do not mark ✅,
     do not commit, do not push. Tell the user to restore verify tooling first.
     Never treat package tests alone as the complete gate.  
-5. Commit is **part of this skill** when the user invoked `/task-3-complete`:  
+5. Commit is **part of this skill** when the user invoked `/praxis:complete`:  
    - Never update git config  
    - Never `--trailer` / Co-authored-by  
    - Never force-push  
@@ -99,7 +99,7 @@ Record results in the task **Verification** section if not already current.
 
 ### 3. Dialectic (mandatory)
 
-Fully execute `.cursor/skills/dialectic-of-cognition/SKILL.md`
+Fully execute `/praxis:learn`
 (Modes A/B for this project).
 
 ### 4. Downstream task sync
@@ -192,8 +192,10 @@ TXX → ✅
 <commands + what to look for>
 # or: Nothing to test — <why>
 ### Next
-/task-1-plan TYY
+button → /praxis:plan TYY
 ```
+
+**Next-step button (mandatory):** do not tell the user to type the next command. End the turn with `mcp__ccd_turn__wrap_up` — `recap` = what is now true; `ask` = one short question; `actions[0]` = a reply with `label` "Plan TYY" and `message` `/praxis:plan TYY` (Manual test steps go in the recap; if there is no next task, end with the recap alone). If `wrap_up` is unavailable (not the Claude desktop app), print the command on its own line instead.
 
 ## Do not
 
@@ -205,8 +207,4 @@ TXX → ✅
 - Use `--no-verify` / skip hooks without explicit user approval  
 - Skip the default push when `--no-push` was **not** set and `origin` exists  
 - Force-push  
-- Omit Manual test / Nothing to test
-
-[large]: https://platform.kimi.ai/docs/guide/kimi-k3-quickstart
-[medium]: https://api-docs.deepseek.com/quick_start/pricing
-[small]: https://api-docs.deepseek.com/quick_start/pricing  
+- Omit Manual test / Nothing to test  

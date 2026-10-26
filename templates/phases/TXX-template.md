@@ -23,14 +23,14 @@
 
 ## Implementation Plan
 
-*(Filled by `/task-1-plan` — do not invent during bootstrap beyond high-level notes.)*
+*(Filled by `/praxis:plan` — do not invent during bootstrap beyond high-level notes.)*
 
 ### High-level notes (bootstrap)
 
 - {{NOTE_1}}
 - Reference: {{PATH_OR_URL}}
 
-## Execution plan (filled by /task-1-plan)
+## Execution plan (filled by /praxis:plan)
 
 **Date:**  
 **Codebase snapshot:**  
@@ -74,21 +74,21 @@
 
 ## Verification
 
-*(Filled by `/task-2-execute`; re-confirmed by `/task-3-complete`)*
+*(Filled by `/praxis:execute`; re-confirmed by `/praxis:complete`)*
 
 ## Files Modified
 
-*(Filled by `/task-2-execute`)*
+*(Filled by `/praxis:execute`)*
 
 ## Manual test (for humans)
 
-*(Filled by `/task-3-complete` — runnable commands + what to look for, or
+*(Filled by `/praxis:complete` — runnable commands + what to look for, or
 `Nothing to test — <why>`)*
 
 ## Learnings
 
-*(Filled by `/task-3-complete` / dialectic — link rule entries)*
+*(Filled by `/praxis:complete` / dialectic — link rule entries)*
 
 ## Reality notes
 
-*(Amended by upstream `/task-3-complete` if prior tasks changed assumptions)*
+*(Amended by upstream `/praxis:complete` if prior tasks changed assumptions)*

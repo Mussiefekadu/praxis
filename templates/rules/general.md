@@ -1,15 +1,13 @@
----
-description: Always-applied project routing, automation, and safety rules
-alwaysApply: true
----
-
 # {{PRODUCT_NAME}} — Agent Rules
 
-This file is the always-on entry for Cursor (`.cursor/rules/general.mdc`).
-Domain playbooks live beside it as `.cursor/rules/*.mdc`. Invocable workflows
-live in `.cursor/skills/*/SKILL.md`.
+This file is the always-on entry for Claude Code (`.claude/rules/general.md`).
+It has no `paths:` frontmatter, so Claude Code loads it at the start of every
+session. Domain playbooks live beside it as `.claude/rules/*.md` — most carry
+`paths:` frontmatter so Claude Code loads them automatically when a matching
+file is read or edited (Claude Code's native path-scoped rules mechanism).
+Invocable workflows ship with the Praxis plugin as `/praxis:*` skills.
 
-**`.cursor/rules/` is the sole source of truth for rules.** Do not recreate a
+**`.claude/rules/` is the sole source of truth for rules.** Do not recreate a
 parallel rules tree elsewhere.
 
 **Hub → spoke (hard):** this file is the hub. Domain playbooks are spokes.
@@ -70,9 +68,13 @@ Name the **capability layer** you are advancing so work stays ordered.
 
 ## CRITICAL: Read Rules Before You Act
 
-1. **Read before you act.** Before editing or proposing a change, read the
-   matching rule file(s) in `.cursor/rules/`.
-2. **This file always applies.**
+1. **Path-scoped spokes auto-load.** A domain spoke with `paths:` frontmatter
+   is loaded automatically the moment you read or edit a matching file — you
+   don't have to fetch it by hand. Still, explicitly read the matching rule
+   file(s) in `.claude/rules/` before proposing a change to a domain, especially
+   when creating a brand-new file that won't trigger auto-load on its own.
+2. **This file always applies** — it carries no `paths:` frontmatter, so
+   Claude Code loads it at the start of every session.
 3. **Rules override defaults.** If a rule conflicts with your instincts, the
    rule wins.
 4. **If no rule covers the situation, stop and ask** rather than guessing.
@@ -81,9 +83,9 @@ Name the **capability layer** you are advancing so work stays ordered.
 
 | When you are working on... | Read and follow |
 | -------------------------- | --------------- |
-| {{DOMAIN_A_DESCRIPTION}} | `.cursor/rules/{{domain_a}}.mdc` |
-| {{DOMAIN_B_DESCRIPTION}} | `.cursor/rules/{{domain_b}}.mdc` |
-| Shared language craft, tests, lint | `.cursor/rules/{{lang}}.mdc` |
+| {{DOMAIN_A_DESCRIPTION}} | `.claude/rules/{{domain_a}}.md` |
+| {{DOMAIN_B_DESCRIPTION}} | `.claude/rules/{{domain_b}}.md` |
+| Shared language craft, tests, lint | `.claude/rules/{{lang}}.md` |
 | Anything else or unsure | this file + ask |
 
 When a task spans multiple areas, read every applicable rule file before starting.
@@ -119,7 +121,7 @@ When a task spans multiple areas, read every applicable rule file before startin
 ## Delivery Principles
 
 **MVP sequence of record:** [`planning/phases/INDEX.md`](../../planning/phases/INDEX.md).
-Use `/task-1-plan` → `/task-2-execute` → `/task-3-complete`. Do not skip layers.
+Use `/praxis:plan` → `/praxis:execute` → `/praxis:complete`. Do not skip layers.
 
 ### Layered build order
 
@@ -136,11 +138,11 @@ the cheapest proof that fits (`{{VERIFY_COMMANDS}}`, package tests, manual path)
 
 ### Model split: expensive plan → cheap execute
 
-Use a **large / expensive** model for `/task-1-plan` (and bootstrap / hard
-dialectic), and a **smaller / faster / cheaper** model for `/task-2-execute`
-and usually `/task-3-complete`.
+Use a **large / expensive** model for `/praxis:plan` (and bootstrap / hard
+dialectic), and a **smaller / faster / cheaper** model for `/praxis:execute`
+and usually `/praxis:complete`.
 
-**Plan handoff bar:** `/task-1-plan` must write an Execution plan detailed
+**Plan handoff bar:** `/praxis:plan` must write an Execution plan detailed
 enough that a **lesser agent** can implement it without rediscovering
 architecture, guessing file paths, or inventing design. Prefer:
 
@@ -160,8 +162,8 @@ If the plan is only high-level ("wire the handler", "add tests"), it is
 
 NEVER do these without explicit user approval:
 
-- Modify `.cursor/rules/` files (except via `/dialectic-of-cognition`)
-- Commit or push to git **outside** `/task-3-complete`
+- Modify `.claude/rules/` files (except via `/praxis:learn`)
+- Commit or push to git **outside** `/praxis:complete`
 - Force-push, rewrite shared history, or push secrets
 - {{EXTRA_NO_GO_1}}
 - {{EXTRA_NO_GO_2}}
@@ -179,16 +181,16 @@ NEVER do these without explicit user approval:
 
 ## Rule Maintenance (Self-Evolving Rules)
 
-<!-- last-verified: 2026-07 -->
+<!-- last-verified: 2026-08 -->
 
 Rules must improve over time. Follow the dialectic of cognition:
 
 > *From the particular to the general, then from the general to the particular.*
 
-**Operational harness:** invoke `/dialectic-of-cognition` (see
-`.cursor/skills/dialectic-of-cognition/SKILL.md`).
+**Operational harness:** invoke `/praxis:learn` (see
+plugin skill `learn`).
 
-**Write only to** `.cursor/rules/*.mdc`.
+**Write only to** `.claude/rules/*.md`.
 
 **Trigger:** Apply this process when ANY of these are true:
 
@@ -212,7 +214,7 @@ Extract the **class** of problem, not the instance.
 
 ### 2. General → Particular (encode)
 
-Write into the appropriate `.cursor/rules/*.mdc`. A good entry answers:
+Write into the appropriate `.claude/rules/*.md`. A good entry answers:
 
 1. **What does it look like?** (symptoms)
 2. **What causes it?** (root pattern)
@@ -247,8 +249,16 @@ working in that domain.
 
 ### 7. File size threshold — split before rules become unreadable
 
-If a `.cursor/rules/*.mdc` file exceeds ~550 lines after an edit, propose a
+If a `.claude/rules/*.md` file exceeds ~550 lines after an edit, propose a
 split to the user. Never split without approval.
+
+### 8. Path scoping — keep spokes auto-loading correctly
+
+When creating or editing a spoke, keep its `paths:` frontmatter matched to the
+files it actually governs. A spoke with no `paths:` frontmatter loads on
+**every** session — reserve that only for genuinely cross-cutting conventions
+with no natural glob shape, and keep those short. Prefer `paths:` scoping
+wherever the domain maps to real file patterns.
 
 ---
 
@@ -256,10 +266,33 @@ split to the user. Never split without approval.
 
 | Change type / Problem domain | Rule file |
 | ---------------------------- | --------- |
-| {{DOMAIN_A}} | `.cursor/rules/{{domain_a}}.mdc` |
-| {{DOMAIN_B}} | `.cursor/rules/{{domain_b}}.mdc` |
-| Language / tests / lint | `.cursor/rules/{{lang}}.mdc` |
-| Cross-cutting / unknown | `.cursor/rules/general.mdc` |
+| {{DOMAIN_A}} | `.claude/rules/{{domain_a}}.md` |
+| {{DOMAIN_B}} | `.claude/rules/{{domain_b}}.md` |
+| Language / tests / lint | `.claude/rules/{{lang}}.md` |
+| Cross-cutting / unknown | `.claude/rules/general.md` |
+
+---
+
+## Subagent Roster
+
+Delegate facts-gathering and mechanical work to the subagents defined in
+`.claude/agents/*.md` instead of doing it serially yourself. Invoke via the
+`Agent` tool with the subagent's name, e.g. `Agent(explorer)`. Keep decisions,
+design, and human interaction on the parent.
+
+| Subagent | Purpose |
+| -------- | ------- |
+| `explorer` | Find files, read code, trace calls, map architecture, verify facts |
+| `web-researcher` | Fetch docs, check API references |
+| `implementer` | Well-scoped feature/bugfix from a clear spec |
+| `refactorer` | Extract/rename/move — behavior-preserving changes |
+| `test-runner` | Run tests, diagnose failures |
+| `code-reviewer` | Correctness/lint/style/bug review of a diff |
+| `verifier` | Skeptical independent check that claimed work is actually done |
+| `doc-writer` | Docs/changelog/README updates from diffs |
+
+See [`METHODOLOGY.md` — Subagent delegation](../../METHODOLOGY.md#4--subagent-delegation)
+for delegation rules (parallelize independent work, escalate on bad output, etc.).
 
 ---
 
@@ -267,11 +300,15 @@ split to the user. Never split without approval.
 
 | Skill | Path | Purpose |
 | ----- | ---- | ------- |
-| `/bootstrap-turboplan` | `.cursor/skills/bootstrap-turboplan/SKILL.md` | From goal → rules + phases + dep spokes + README + .gitignore + root verify gate |
-| `/task-1-plan` | `.cursor/skills/task-1-plan/SKILL.md` | Plan one phase task |
-| `/task-2-execute` | `.cursor/skills/task-2-execute/SKILL.md` | Implement one phase task |
-| `/task-3-complete` | `.cursor/skills/task-3-complete/SKILL.md` | Verify + dialectic + INDEX ✅ + commit + push (default) + manual test + next branch |
-| `/dialectic-of-cognition` | `.cursor/skills/dialectic-of-cognition/SKILL.md` | Encode session learnings into rules |
-| `/audit-rules` | `.cursor/skills/audit-rules/SKILL.md` | Read-only audit of rules/skills vs tree |
-| `/grill-me` | `.cursor/skills/grill-me/SKILL.md` | Interrogate an idea over a design tree until shared understanding; feeds /setup-tasks |
-| `/setup-tasks` | `.cursor/skills/setup-tasks/SKILL.md` | New feature → context → phase stubs appended to INDEX |
+| `/praxis:bootstrap` | plugin skill `bootstrap` | From goal → rules + phases + dep spokes + README + .gitignore + root verify gate |
+| `/praxis:plan` | plugin skill `plan` | Plan one phase task |
+| `/praxis:execute` | plugin skill `execute` | Implement one phase task |
+| `/praxis:complete` | plugin skill `complete` | Verify + dialectic + INDEX ✅ + commit + push (default) + manual test + next branch |
+| `/praxis:learn` | plugin skill `learn` | Encode session learnings into rules |
+| `/praxis:audit-rules` | plugin skill `audit-rules` | Read-only audit of rules/skills vs tree |
+| `/praxis:grill-me` | plugin skill `grill-me` | Interrogate an idea over a design tree until shared understanding; feeds /praxis:add-feature |
+| `/praxis:add-feature` | plugin skill `add-feature` | New feature → context → phase stubs appended to INDEX |
+
+## Project constraints
+
+<!-- BOOTSTRAP: product-specific hard constraints that /praxis:plan, execute and complete must obey (stack, verify command, forbidden trees, no-gos). -->

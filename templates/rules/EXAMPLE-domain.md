@@ -1,12 +1,18 @@
 ---
-description: "{{DOMAIN_NAME}} conventions and failure modes"
-globs: "{{GLOBS}}"
-alwaysApply: false
+paths:
+  - "{{GLOB_1}}"
+  - "{{GLOB_2}}"
 ---
 
 # {{DOMAIN_NAME}} Rules
 
-<!-- BOOTSTRAP: rename this file to a real spoke (e.g. api-client.mdc). Fill tables from real failures and docs. -->
+<!-- BOOTSTRAP: rename this file to a real spoke (e.g. api-client.md). Fill tables from real failures and docs. -->
+
+<!-- Claude Code's rules mechanism has no `description` frontmatter field — the
+     H1 above plus Scope below are what explains this spoke to a reader. If this
+     domain genuinely has no natural file-glob shape (rare — most do), delete the
+     `paths:` block entirely; the file then always loads, like the hub. Keep any
+     such unscoped spoke short, since it adds fixed cost to every session. -->
 
 ## Scope
 

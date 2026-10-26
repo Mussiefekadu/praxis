@@ -1,20 +1,20 @@
 ---
-name: dialectic-of-cognition
+name: learn
 description: >
-  Capture session learnings into project rules. Manual; also from /task-3-complete.
+  Capture session learnings into project rules. Manual; also from /praxis:complete.
 disable-model-invocation: true
 allowed-tools: Bash, Read, Grep, Glob, Edit, Write
 ---
 
-# /dialectic-of-cognition — Capture session learnings into evolving rules
+# /praxis:learn — Capture session learnings into evolving rules
 
 Perform rule maintenance per **Rule Maintenance (Self-Evolving Rules)** in
-`.cursor/rules/general.mdc` — that section is authoritative (triggers, abort
+`.claude/rules/general.md` — that section is authoritative (triggers, abort
 gate, steps **0–7**). This skill is the operational harness only.
 
-**Store (this project)**: `.cursor/rules/*.mdc` only.
+**Store (this project)**: `.claude/rules/*.md` only.
 
-Follow general.mdc steps 0–7 when encoding (refine, contradict-check, verify,
+Follow general.md steps 0–7 when encoding (refine, contradict-check, verify,
 timestamp, size threshold **600**).
 
 ---
@@ -33,7 +33,7 @@ Symptom, root-cause **class**, resolution **pattern**.
 
 ### A2 — Route
 
-Routing Table at the bottom of `general.mdc` → project spokes.
+Routing Table at the bottom of `general.md` → project spokes.
 
 ---
 
@@ -48,7 +48,7 @@ Routing Table at the bottom of `general.mdc` → project spokes.
 State the rule without naming a specific file/function/class/variable/endpoint?
 If not, skip for project rules.
 
-### B4 — Encode into `.cursor/rules/*.mdc`
+### B4 — Encode into `.claude/rules/*.md`
 
 Prefer refine. Add `<!-- last-verified: YYYY-MM -->`.
 

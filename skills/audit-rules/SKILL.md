@@ -1,17 +1,17 @@
 ---
 name: audit-rules
 description: >
-  Read-only audit of .cursor/rules/*.mdc and .cursor/skills/*/SKILL.md against
-  the codebase. Flags staleness, contradictions, missing routing.
-  Never auto-removes content.
+  Read-only audit of .claude/rules/*.md, the hub skills inventory, and
+  .claude/agents/*.md against the codebase. Flags staleness, contradictions,
+  missing routing. Never auto-removes content.
 disable-model-invocation: true
 allowed-tools: Bash, Read, Grep, Glob
 ---
 
-# /audit-rules — Rules + skills audit
+# /praxis:audit-rules — Rules + skills audit
 
-**Principles**: `.cursor/rules/general.mdc`  
-**Store**: `.cursor/rules/*.mdc` only  
+**Principles**: `.claude/rules/general.md`  
+**Store**: `.claude/rules/*.md` only  
 
 ## CRITICAL CONSTRAINTS
 
@@ -28,6 +28,10 @@ Extract from every rule file: paths, package/component names, problem-class tabl
 
 Extract from every skill: frontmatter, path refs, tool allowances.
 
+Extract from every subagent (`.claude/agents/*.md`): frontmatter (`name`,
+`description`, `tools`), and cross-reference against every skill's
+`Agent(...)` allowlist.
+
 ## Phase 2 — Mechanical verification
 
 - Paths exist or `PENDING_SCAFFOLD`  
@@ -37,25 +41,30 @@ Extract from every skill: frontmatter, path refs, tool allowances.
 
 ## Phase 3 — Structural audit
 
-- Routing Map ↔ actual `.cursor/rules/*.mdc`  
-- Skills inventory in hub ↔ `.cursor/skills/*/`  
-- **Hub fidelity:** `general.mdc` still contains **Karpathy Behavioral Guidelines**
+- Routing Map ↔ actual `.claude/rules/*.md`  
+- Skills inventory in hub ↔ the plugin's `/praxis:*` skills  
+- **Hub fidelity:** `general.md` still contains **Karpathy Behavioral Guidelines**
   (four sections), **Project Architecture**, **Delivery Principles**, and
   **Rule Maintenance** steps **0–7**. If bootstrap stripped these → `MISSING` /
   dilution gap  
 - **Hooks:** lefthook (or documented equivalent) present and wired to lint+test;
   root `Makefile` with `verify`; stack lint config present — flag absence as `BROKEN`
   (execute/complete must hard-abort)  
-- **Complete skill:** `/task-3-complete` documents push-by-default, `--no-push`,
+- **Complete skill:** `/praxis:complete` documents push-by-default, `--no-push`,
   and mandatory Manual test / Nothing to test handoff; verify **presence** abort  
-- **Execute skill:** `/task-2-execute` documents the same verify presence abort  
+- **Execute skill:** `/praxis:execute` documents the same verify presence abort  
 - **Bootstrap skill:** prefers latest stable Go + package baselines; creates
   dependency/docs spokes with official URLs; creates human `README.md`; creates
   stack-appropriate `.gitignore`; ships verify gate (Makefile + lint config +
   lefthook) to project root from `templates/seeds/verify/` /
   `planning/verify-SEED/` (Go Makefile includes multi-platform `build-all`)  
-- **Audience split:** named deps appear in both `.cursor/rules/*.mdc` and README
+- **Audience split:** named deps appear in both `.claude/rules/*.md` and README
   Dependencies & docs (flag one-sided coverage as `GAP`)  
+- **Subagent fidelity:** every `Agent(name)` referenced in a skill's `allowed-tools`
+  has a matching `.claude/agents/name.md` file → `BROKEN` if not; every shipped
+  subagent (explorer, web-researcher, implementer, refactorer, test-runner,
+  code-reviewer, verifier, doc-writer) still exists unless deliberately removed
+  by the human → `MISSING` if silently dropped by bootstrap  
 
 ## Phase 4 — Contradictions
 

@@ -1,0 +1,12 @@
+{
+  "name": "praxis",
+  "owner": { "name": "Mussiefekadu" },
+  "description": "Praxis: grill, plan, execute, complete — with subagents.",
+  "plugins": [
+    {
+      "name": "praxis",
+      "source": "./",
+      "description": "Long-horizon planning workflow: grill-me, bootstrap, plan/execute/complete loop, subagent roster."
+    }
+  ]
+}

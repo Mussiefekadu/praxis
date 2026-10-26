@@ -3,18 +3,18 @@ name: grill-me
 description: >-
   Stress-test an idea before planning. Interviews the human in rounds over a
   design tree until shared understanding is reached, gathering facts itself via
-  sub-agents. Runs between "human has an idea" and /setup-tasks (or
-  /bootstrap-turboplan). Does not write plans or tasks.
+  sub-agents. Runs between "human has an idea" and /praxis:add-feature (or
+  /praxis:bootstrap). Does not write plans or tasks.
 disable-model-invocation: true
-allowed-tools: Bash, Read, Grep, Glob, Edit, Write, WebFetch, WebSearch, Task
+allowed-tools: Bash, Read, Grep, Glob, Edit, Write, WebFetch, WebSearch, Agent(praxis:explorer, praxis:web-researcher)
 ---
 
-# /grill-me — Idea → interrogated, settled shared understanding
+# /praxis:grill-me — Idea → interrogated, settled shared understanding
 
 You grill the human about an idea, feature, or decision **before** any planning
 skill runs. The output of this session is a **settled design tree** — every
 decision made or deliberately deferred, nothing silently assumed — which becomes
-the input context for `/setup-tasks` (new feature) or `/bootstrap-turboplan`
+the input context for `/praxis:add-feature` (new feature) or `/praxis:bootstrap`
 (new project).
 
 **You do not write phase stubs, plans, or code.** You interview until the
@@ -27,7 +27,7 @@ confirms.
 
 Before the first question:
 
-- Read `.cursor/rules/general.mdc` (hub) and every spoke relevant to the idea
+- Read `.claude/rules/general.md` (hub) and every spoke relevant to the idea
 - Read `planning/phases/INDEX.md` to know what exists and what's done
 - Read any feature-plan / spec documents the human attached or referenced
 - Grep the codebase for the surfaces the idea touches
@@ -82,16 +82,16 @@ left silently assumed. Then:
    (migration/schema, permissions/UX, pipeline, search, UI, sync, … as fits),
    capturing every settled decision with its concrete specifics
 3. Verify risky assumptions against rules/docs one final pass if the human asks
-4. Ask the human to confirm
+4. Ask the human to confirm — via `wrap_up` buttons (see below), not prose
 
-Only after confirmation does the next skill run — hand off verbatim: the
+Offer the next skill as a button, but only once the summary is confirmed. Use `mcp__ccd_turn__wrap_up` with `actions` = [reply "Confirm → bootstrap" with message `/praxis:bootstrap` (greenfield) or "Confirm → add-feature" with message `/praxis:add-feature` (existing project), reply "Keep grilling"] — pick the one that fits first. Fallback when `wrap_up` is unavailable: print the command. Only after confirmation does the next skill run — hand off verbatim: the
 summary (plus the question/decision log) is the context input for
-`/setup-tasks` or `/bootstrap-turboplan`. Every settled decision must land in
+`/praxis:add-feature` or `/praxis:bootstrap`. Every settled decision must land in
 the INDEX header and the task stubs that follow — nothing assumed.
 
 ## Do not
 
-- Run `/setup-tasks` or `/bootstrap-turboplan` before the human confirms the summary
+- Run `/praxis:add-feature` or `/praxis:bootstrap` before the human confirms the summary
 - Ask the human questions a sub-agent could answer from the repo or docs
 - Record a decision the human did not make or accept a ➡️ for
 - Write phase stubs, plans, or product code

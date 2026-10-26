@@ -1,19 +1,19 @@
 ---
-name: task-1-plan
+name: plan
 description: >
   Plan or re-plan a single MVP phase task from planning/phases/. Produce a
-  handoff-ready plan so a lesser model can run /task-2-execute. Use a
-  [medium] model by default; switch to [large] only for complex tasks.
-  Manual only — /task-1-plan TXX.
+  handoff-ready plan so a lesser model can run /praxis:execute. Use a
+  medium model by default; switch to large only for complex tasks.
+  Manual only — /praxis:plan TXX.
 disable-model-invocation: true
-allowed-tools: Bash, Read, Grep, Glob, Edit, Write
+allowed-tools: Bash, Read, Grep, Glob, Edit, Write, Agent(praxis:explorer, praxis:web-researcher)
 ---
 
-# /task-1-plan — Plan one atomic MVP task
+# /praxis:plan — Plan one atomic MVP task
 
 You refine **one** task file under `planning/phases/` so a **lesser agent**
-can run `/task-2-execute` next without rediscovering the design. Use a
-**[medium]** model by default; switch to **[large]** only for complex tasks.
+can run `/praxis:execute` next without rediscovering the design. Use a
+**medium** model by default; switch to **large** only for complex tasks.
 You do **not** implement product code unless the user explicitly asks.
 
 > 💡 Model sizing is a **recommendation**, not a hard constraint — use the best
@@ -28,9 +28,9 @@ You do **not** implement product code unless the user explicitly asks.
 
 ## Hard constraints (never violate in the plan)
 
-<!-- BOOTSTRAP: replace this block with product-specific constraints. -->
+Also obey the **Project constraints** section of `.claude/rules/general.md`.
 
-1. Follow `.cursor/rules/general.mdc` — including **Karpathy Behavioral Guidelines**
+1. Follow `.claude/rules/general.md` — including **Karpathy Behavioral Guidelines**
    (think / simplicity / surgical / goal-driven) and domain spokes.  
 2. Stay inside this task’s Acceptance Criteria — no gold plating (Simplicity First).  
 3. Execution plan steps must use `→ verify:` pairs (Goal-Driven Execution).  
@@ -44,7 +44,7 @@ You do **not** implement product code unless the user explicitly asks.
 8. If the task is ambiguous, stop and ask (Think Before Coding) — do not silently pick.  
 9. If this task is *exceptionally* hard even with a detailed plan, add
    **`Execute model recommendation: large`** with a one-line why; otherwise omit
-   (default = [medium]/[small] execute is fine).  
+   (default = medium/small execute is fine).  
 
 ## Procedure
 
@@ -53,27 +53,27 @@ You do **not** implement product code unless the user explicitly asks.
 - Read `planning/phases/INDEX.md`  
 - Read the target task file end-to-end  
 - Read depends-on task’s **Learnings** / **Verification** if `✅` / `Done`  
-- Skim `.cursor/rules/general.mdc` + matching domain rules  
+- Skim `.claude/rules/general.md` + matching domain rules  
 - **Delegate the repo reality-check to explorer subagents** (one per independent
   area the task touches) rather than reading file-by-file on the parent; fold
-  their findings into the plan. If a fact requires docs, delegate a web-research
-  subagent. Small single-file reads may stay inline.
+  their findings into the plan. If a fact requires docs, delegate a
+  web-researcher subagent. Small single-file reads may stay inline.
 
 ### 2. Reality check
 
 List what exists vs what the task assumes. Update Implementation notes / AC if
-the codebase diverged. Record **Reality notes** if upstream task-3-complete left any.
+the codebase diverged. Record **Reality notes** if upstream complete left any.
 
 ### 3. Write execution plan into the task file
 
 Write for a **junior / lesser-model executor**: no implied context.
 
 ```markdown
-## Execution plan (filled by /task-1-plan)
+## Execution plan (filled by /praxis:plan)
 
 **Date:** YYYY-MM-DD
 **Codebase snapshot:** …
-**Execute model:** [medium]/[small] (default) | large (only if justified below)
+**Execute model:** medium/small (default) | large (only if justified below)
 
 ### Context for executor
 - Goal in one paragraph
@@ -97,7 +97,7 @@ Write for a **junior / lesser-model executor**: no implied context.
 - …
 
 ### Execute model recommendation
-- [medium]/[small] (default) | large — rationale: …
+- medium/small (default) | large — rationale: …
 ```
 
 Set Status to `Planned` only when a lesser agent could follow the plan cold.
@@ -105,15 +105,13 @@ Append Status History row.
 
 ### 4. Output to user
 
-Ready? / Key steps / AC / Execute model: [medium](default)|large / Next: `/task-2-execute TXX`
+Ready? / Key steps / AC / Execute model: medium(default)|large
+
+**Next-step button (mandatory):** do not tell the user to type the next command. End the turn with `mcp__ccd_turn__wrap_up` — `recap` = what is now true; `ask` = one short question; `actions[0]` = a reply with `label` "Execute TXX" and `message` `/praxis:execute TXX` (add a second reply "Re-plan" only if the plan has open questions). If `wrap_up` is unavailable (not the Claude desktop app), print the command on its own line instead.
 
 ## Do not
 
 - Implement the task  
 - Expand scope into later layers  
 - Mark INDEX `✅`  
-- Leave a hand-wavy plan that forces the execute model to re-design
-
-[large]: https://platform.kimi.ai/docs/guide/kimi-k3-quickstart
-[medium]: https://api-docs.deepseek.com/quick_start/pricing
-[small]: https://api-docs.deepseek.com/quick_start/pricing  
+- Leave a hand-wavy plan that forces the execute model to re-design  

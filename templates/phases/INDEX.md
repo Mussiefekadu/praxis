@@ -1,7 +1,7 @@
 # MVP Phase Index
 
 **Product**: {{PRODUCT_NAME}}  
-**Method**: Turboplan — `/task-1-plan` → `/task-2-execute` → `/task-3-complete`  
+**Method**: Praxis — `/praxis:plan` → `/praxis:execute` → `/praxis:complete`  
 **Rule**: Only one task `InProgress` unless the human approves more.  
 **INDEX Status**: use `✅` when complete (never the word `Done` in this column).
 
@@ -28,9 +28,9 @@
 
 ## How to work
 
-1. `/task-1-plan T01`  
-2. `/task-2-execute T01`  
-3. `/task-3-complete T01` → push (default; `--no-push` to skip) + Manual test → continues on `<T02-stub-stem>`  
+1. `/praxis:plan T01`  
+2. `/praxis:execute T01`  
+3. `/praxis:complete T01` → push (default; `--no-push` to skip) + Manual test → continues on `<T02-stub-stem>`  
 4. Repeat  
 
 Bootstrap replaces this skeleton with real rows and creates stub files.

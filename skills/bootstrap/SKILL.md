@@ -1,17 +1,17 @@
 ---
-name: bootstrap-turboplan
+name: bootstrap
 description: >
-  From a written product goal, adapt .cursor/rules and .cursor/skills, seed
+  From a written product goal, adapt .claude/rules, seed
   planning/phases, create dependency rule spokes from
   provided docs, write a human README.md, and an appropriate .gitignore.
-  Manual only — /bootstrap-turboplan. Does not implement product features.
+  Manual only — /praxis:bootstrap. Does not implement product features.
 disable-model-invocation: true
-allowed-tools: Bash, Read, Grep, Glob, Edit, Write, WebFetch, WebSearch, Task
+allowed-tools: Bash, Read, Grep, Glob, Edit, Write, WebFetch, WebSearch, Agent(praxis:explorer, praxis:web-researcher)
 ---
 
-# /bootstrap-turboplan — Goal → rules + phases + skills + human README
+# /praxis:bootstrap — Goal → rules + phases + skills + human README
 
-You install or retarget **Turboplan** for this repository. You produce agent
+You install or retarget **Praxis** for this repository. You produce agent
 operating infrastructure **and** a human-facing `README.md`. You **do not**
 implement product features.
 
@@ -19,7 +19,7 @@ implement product features.
 
 | Audience | Primary artifacts |
 | -------- | ----------------- |
-| **LLMs / agents** | `.cursor/rules/*.mdc`, `.cursor/skills/*/SKILL.md` |
+| **LLMs / agents** | `.claude/rules/*.md` (skills and subagents ship with the plugin) |
 | **Humans** | Root `README.md` (+ phase INDEX for operators) |
 
 ## Arguments (user provides in the invocation)
@@ -34,7 +34,7 @@ implement product features.
   reimplement, do not vendor)
 - Optional: preferred layer list / task count target
 
-**CRITICAL — context gathering is mandatory.** If the user invokes `/bootstrap-turboplan`
+**CRITICAL — context gathering is mandatory.** If the user invokes `/praxis:bootstrap`
 without a detailed goal and technical description, you MUST ask for them before
 proceeding. Do not invent the goal. Do not guess the stack. Ask:
 
@@ -55,19 +55,20 @@ extract the answers — do not re-ask for information already provided.
 
 ## Hard constraints
 
-1. Write rules only under `.cursor/rules/`.
+1. Write rules only under `.claude/rules/`.
 2. Delete spokes/skills that cannot apply; replace wrong-provider files (do not light-edit).
 3. Seed `planning/phases/INDEX.md` + one stub file per INDEX row.  
-4. Adapt skill hard constraints to **this** product.  
-5. Do not commit unless the user explicitly asks.  
-6. Do not implement product features. Specifically:
+4. Skills are plugin-provided and not edited per project. Put product-specific constraints in a **Project constraints** section of `.claude/rules/general.md`; the plan/execute/complete skills read it.  
+5. If `.claude/rules/general.md` or `planning/phases/INDEX.md` is missing, run `/praxis:init` first.  
+6. Do not commit unless the user explicitly asks.  
+7. Do not implement product features. Specifically:
    - NEVER create Go source files, `cmd/`, `internal/`, `pkg/`, or `migrations/`
-     directories. These belong to T01 via `/task-2-execute`.
+     directories. These belong to T01 via `/praxis:execute`.
    - NEVER run `go mod init` or scaffold a Go module. T01 does that.
    - In-scope (NOT product code): root Makefile, .golangci.yml, lefthook.yml,
-     .gitignore, README.md, .cursor/rules/*.mdc, .cursor/skills/*/SKILL.md,
+     .gitignore, README.md, .claude/rules/*.md,
      planning/phases/INDEX.md + stubs.  
-7. Bootstrap AC requires **git repo + verify gate files present + lefthook installed**:
+8. Bootstrap AC requires **git repo + verify gate files present + lefthook installed**:
    root `Makefile` with `verify` target (lint+test+build for Go), stack lint config,
    and `lefthook install` succeeded. Seeds live under `templates/seeds/` (after install:
    `planning/verify-SEED/`).
@@ -76,44 +77,49 @@ extract the answers — do not re-ask for information already provided.
    `build`, multi-platform `build-all`, and `verify` (= lint+test+build).
    **Do not require `make verify` to pass yet** — there is no source code.
    T01 creates the skeleton; verify passes for the first time in T01.  
-8. Use the **stack the user specified** in the technical description. Do not
+9. Use the **stack the user specified** in the technical description. Do not
    silently substitute languages, frameworks, or toolchains. If the user
    specified Go, use Go. If they specified React, use React. Raise any
    non-obvious choices as **bootstrap concerns** with rationale.  
-9. Use the **toolchain versions the user specified** (or current environment
+10. Use the **toolchain versions the user specified** (or current environment
     baseline). Do not silently upgrade. If the environment constrains versions,
     document under **Bootstrap concerns**.  
-10. For every named dependency / provided doc set that agents will use: create a
-    **dedicated spoke** under `.cursor/rules/` with an **External docs** link to
+11. For every named dependency / provided doc set that agents will use: create a
+    **dedicated spoke** under `.claude/rules/` with an **External docs** link to
     the official source, and mirror a short human summary in `README.md`.  
-11. Create or replace root **`README.md`** with: emoji section headers; ASCII
+12. Create or replace root **`README.md`** with: emoji section headers; ASCII
     banner; a brief human **Summary**; a **Table of Contents** immediately under
     the summary; then the body sections — humans read this; agents read rules/skills.  
-12. Create or update root **`.gitignore`** appropriate to the stack — use best
+13. Create or update root **`.gitignore`** appropriate to the stack — use best
     judgment (always secrets + scratch; language/tooling artifacts as needed).  
+14. `.claude/agents/*.md` is generic subagent infrastructure (explorer,
+    web-researcher, implementer, refactorer, test-runner, code-reviewer,
+    verifier, doc-writer) — (plugin-provided) — never copy or product-adapt it. Leave the
+    shipped roster intact; only add a new subagent file if the product
+    genuinely needs a role none of these cover.  
 
 ## Procedure
 
 ### 1. Inventory current agent files
 
-List `.cursor/rules/*.mdc` and `.cursor/skills/*/SKILL.md`. Classify each:
-DELETE / ADAPT / KEEP (per Turboplan Guide 01).
+List `.claude/rules/*.md`. Classify each:
+DELETE / ADAPT / KEEP (per Praxis Guide 01).
 
 **Delegate:** fan out explorer subagents (one per independent area of the
 codebase/tree) to build the inventory and assess each file; delegate doc
-fetches for dependency spokes to web-research subagents in parallel. Keep
+fetches for dependency spokes to web-researcher subagents in parallel. Keep
 classification **decisions** on the parent.
 
 ### 2. Rewrite hub
 
-Update `.cursor/rules/general.mdc`:
+Update `.claude/rules/general.md`:
 
-- **Strip every reference to Turboplan** — this file is about THIS product, not
-  the methodology that bootstrapped it. No "Turboplan hub", no "Turboplan
-  project", no "bootstrap-turboplan" in the safety rails exception list.
+- **Strip every reference to Praxis** — this file is about THIS product, not
+  the methodology that bootstrapped it. No "Praxis hub", no "Praxis
+  project", no "bootstrap" in the safety rails exception list.
 - **Product name, architecture, build/verify, safety no-gos** — all project-specific
 - **Routing Map + Problem Class table** for new spokes (include every dep spoke)
-- **Skills inventory** — list all skills that exist in `.cursor/skills/`
+- **Skills inventory** — list the plugin's skills (`/praxis:*`)
 - **Layered delivery**: reference `planning/phases/INDEX.md` only. Do NOT copy
   task IDs, layer tables, or phase details into the hub.
 - **Dialectic examples** from **this** domain (failure-mode illustrations only)
@@ -128,36 +134,36 @@ Update `.cursor/rules/general.mdc`:
 
 - Delete obsolete  
 - Create/adapt **product domain** spokes with invariants + at least one symptom table skeleton  
-- Language craft spoke if applicable (`go.mdc`, etc.)  
+- Language craft spoke if applicable (`go.md`, etc.)  
 - **Dependency / docs spokes (mandatory when deps or docs are provided):**
 
   For each library, framework, CLI toolkit, or external API the Goal/Constraints/
   Dependencies/References name (e.g. Cobra, Moonshot API, Cloudflare):
 
   1. Prefer **official documentation** (fetch or use provided URLs).  
-  2. Create `.cursor/rules/<name>.mdc` (e.g. `cobra.mdc`) including:
-     - Title + when to apply (`globs` if useful)  
+  2. Create `.claude/rules/<name>.md` (e.g. `cobra.md`) including:
+     - Title + when to apply (`paths:` frontmatter globs if the domain has a natural file-pattern shape)  
      - **`Docs (if stuck):`** canonical URL near the top (e.g. https://cobra.dev/docs/)  
      - Scope / invariants / layout or API conventions for **this** product  
      - At least one symptom / cause / fix table skeleton (or real patterns from docs)  
      - `<!-- last-verified: YYYY-MM -->`  
   3. Add the spoke to the hub **Routing Map** and Problem Class table.  
   4. Summarize the same dependency for humans in `README.md` → **Dependencies & docs**
-     (name, role, docs URL, link to the `.mdc` spoke).  
+     (name, role, docs URL, link to the `.md` spoke).  
 
-  Use `templates/rules/EXAMPLE-domain.mdc` as the shape. Delete `EXAMPLE-domain.mdc`
+  Use `templates/rules/EXAMPLE-domain.md` as the shape. Delete `EXAMPLE-domain.md`
   when real spokes exist.
 
 ### 4. Skills
 
 Ensure these exist and hard constraints match the product:
 
-- `grill-me`, `task-1-plan`, `task-2-execute`, `task-3-complete`, `dialectic-of-cognition`, `audit-rules`, `setup-tasks`  
-- Keep `bootstrap-turboplan` for future retargets  
+- `grill-me`, `plan`, `execute`, `complete`, `learn`, `audit-rules`, `add-feature`  
+- Keep `bootstrap` for future retargets  
 
 Remove skills that only serve deleted stacks.
 
-### 4b. Clean up installer leftovers
+### 4b. Clean up init leftovers
 
 After verify gate files are adapted to root, delete these stale seeds:
 
@@ -198,7 +204,7 @@ rm -f planning/gitignore-SEED
    lint+test(+build), or if hooks are not installed / do not invoke verify.
    **Do not require `make verify` to pass** — the repo has no source code yet.
    T01 creates the skeleton; verify first passes in T01.  
-6. `/task-2-execute` and `/task-3-complete` must **hard-abort** when this tooling
+6. `/praxis:execute` and `/praxis:complete` must **hard-abort** when this tooling
    is later deleted — bootstrap must leave them unable to “pass” on tests alone.
 
 ### 6. Latest stable toolchain + packages (mandatory)
@@ -251,7 +257,7 @@ It creates the minimal runnable program so that `make verify` passes:
   `internal/` directory tree (`doc.go` stubs), and the root Makefile verify target.
 - No business logic, no features — just the skeleton that compiles.
 - After T01, `make verify` must pass (lint + build + test on the skeleton).  
-3. Create each stub from the Turboplan task template (Description, Requirements, AC, empty Execution plan section, Depends-on, Next, Layer)  
+3. Create each stub from the Praxis task template (Description, Requirements, AC, empty Execution plan section, Depends-on, Next, Layer)  
 4. Final task should be E2E / holistic verification  
 5. Early tasks should include verify wiring / sample test+lint green if scaffold exists  
 
@@ -269,18 +275,18 @@ Prefer the pack seed `templates/seeds/readme/README-SEED.md` (after install:
 5. Pitch details, status pointing at `planning/phases/INDEX.md`  
 6. Repo layout table  
 7. **Dependencies & docs** table (synced with dep spokes from §3)  
-8. **Building with Turboplan** section — link to
-   [https://github.com/commoddity/turboplan](https://github.com/commoddity/turboplan)
+8. **Building with Praxis** section — link to
+   [https://github.com/Mussiefekadu/praxis](https://github.com/Mussiefekadu/praxis)
    and show the plan → execute → complete loop; also link to INDEX  
 9. Security / invariants relevant to humans  
-10. Point methodology at [Turboplan](https://github.com/commoddity/turboplan)  
+10. Point methodology at [Praxis](https://github.com/Mussiefekadu/praxis)  
 
 If a README already exists: adapt it to this shape — do not leave a stale fork
 README that contradicts the new goal. Keep factual content that still applies.
 
 **Ongoing:** as phases complete and architecture changes, keep README and rules
 aligned (execute/complete/dialectic should update human docs when the story for
-humans changed — not only `.mdc` files).
+humans changed — not only `.md` files).
 
 ### 7. Self-check
 
@@ -295,13 +301,13 @@ humans changed — not only `.mdc` files).
 - [ ] No leftover deleted-stack names in rules/skills (grep)  
 - [ ] Every INDEX row has a stub  
 - [ ] Depends-on graph acyclic; T01 actionable  
-- [ ] No references to "Turboplan" in `.cursor/rules/general.mdc` (aside from the skills inventory which lists `bootstrap-turboplan` as a skill name)  
+- [ ] No references to "Praxis" in `.claude/rules/general.md` (aside from the skills inventory which lists `bootstrap` as a skill name)  
 - [ ] Hub states stack choices as facts ("Uses Go 1.26+, React 19") not as methodology preferences ("Prefer Go", "Astro vs Vue vs Wails")
 - [ ] "Karpathy Behavioral Guidelines" heading present in hub (not "Behavioral Guidelines")  
-- [ ] No task IDs or layer tables in general.mdc (INDEX.md is the sole source of truth)  
+- [ ] No task IDs or layer tables in general.md (INDEX.md is the sole source of truth)  
 - [ ] No product source code created (no `cmd/`, `internal/`, `pkg/`, `migrations/`)  
 - [ ] Installer leftovers cleaned (no `_TEMPLATE.md`, `verify-SEED/`, `README-SEED.md`, `gitignore-SEED` under `planning/`)  
-- [ ] `setup-tasks` skill present in `.cursor/skills/` and listed in hub skills inventory  
+- [ ] `/praxis:add-feature` listed in hub skills inventory  
 - [ ] T01 is the app skeleton bootstrap task (module init, main.go, directory tree, `make verify` passes)  
 
 ### 8. Output to user
@@ -337,23 +343,25 @@ humans changed — not only `.mdc` files).
 
 ### Phases
 - T01…Tnn listed
-- First action: /task-1-plan T01
+- First action: button → /praxis:plan T01
 
 ### Skills
-- adapted: …
+- project constraints written to hub: …
 
 ### Review gate
-Please confirm architecture + layer order + README before /task-1-plan T01.
+Confirm architecture + layer order + README, then use the button.
 ```
+
+**Next-step button (mandatory):** do not tell the user to type the next command. End the turn with `mcp__ccd_turn__wrap_up` — `recap` = what is now true; `ask` = one short question; `actions[0]` = a reply with `label` "Plan T01" and `message` `/praxis:plan T01` as the confirm gate (second reply "Change architecture"). If `wrap_up` is unavailable (not the Claude desktop app), print the command on its own line instead.
 
 ## Do not
 
-- Start `/task-2-execute` unless the user explicitly chains it  
+- Start `/praxis:execute` unless the user explicitly chains it  
 - Invent PBIs outside `planning/phases` unless the repo already uses another backlog and the user asks to bridge  
 - Copy secrets from references into the repo  
 - Skip git init / Makefile verify / lefthook and call bootstrap done  
 - Leave verify seeds only under `planning/` without copying adapted files to project root  
-- Leave any "Turboplan" reference in `.cursor/rules/general.mdc` (the skill inventory listing `bootstrap-turboplan` is the only exception)
+- Leave any "Praxis" reference in `.claude/rules/general.md` (the skill inventory listing `bootstrap` is the only exception)
 - State stack choices as methodology preferences — state them as facts  
 - Skip a dep/docs spoke when the user named that dependency or provided its docs  
 - Skip creating/updating human `README.md`  

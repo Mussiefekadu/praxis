@@ -1,6 +1,6 @@
-# Turboplan seeds
+# Praxis seeds
 
-Installer copies these into `planning/` on the target project. **`/bootstrap-turboplan`**
+Installer copies these into `planning/` on the target project. **`/praxis:bootstrap`**
 must adapt them to the **repo root** (seeds under `planning/` alone are not enough).
 
 | Seed folder | Installs as | Bootstrap adapts to |
