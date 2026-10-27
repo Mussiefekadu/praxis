@@ -36,6 +36,7 @@ still on the table.
   - [📕 Influence: Mao's *On Practice* (1937)](#-influence-maos-on-practice-1937)
   - [🧰 What `/praxis:learn` does (summary)](#-what-praxislearn-does-summary)
 - [📂 Files and Directories](#-files-and-directories)
+- [🙏 Credits](#-credits)
 
 ---
 
@@ -247,3 +248,8 @@ If Modes A/B find nothing: *"Nothing to capture — session was routine."*
 │   ├── rules/ .................... 📜 Generic `general.md` + example domain spoke
 │   └── phases/ ................... 🗂️ INDEX.md skeleton + TXX-template.md
 ```
+
+## 🙏 Credits
+
+Praxis is based on [Turboplan](https://github.com/commoddity/turboplan) by
+[commoddity](https://github.com/commoddity), used under the MIT License.
