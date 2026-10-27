@@ -90,9 +90,9 @@ extract the answers — do not re-ask for information already provided.
     the summary; then the body sections — humans read this; agents read rules/skills.  
 13. Create or update root **`.gitignore`** appropriate to the stack — use best
     judgment (always secrets + scratch; language/tooling artifacts as needed).  
-14. `.claude/agents/*.md` is generic subagent infrastructure (explorer,
-    web-researcher, implementer, refactorer, test-runner, code-reviewer,
-    verifier, doc-writer) — (plugin-provided) — never copy or product-adapt it. Leave the
+14. The subagent roster (explorer, web-researcher, implementer, refactorer,
+    test-runner, code-reviewer, verifier, plan-reviewer, doc-writer) is
+    plugin-provided generic infrastructure — never copy or product-adapt it. Leave the
     shipped roster intact; only add a new subagent file if the product
     genuinely needs a role none of these cover.  
 

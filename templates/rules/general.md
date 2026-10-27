@@ -312,6 +312,7 @@ design, and human interaction on the parent.
 | `test-runner` | Run tests, diagnose failures |
 | `code-reviewer` | Correctness/lint/style/bug review of a diff |
 | `verifier` | Skeptical independent check that claimed work is actually done |
+| `plan-reviewer` | Cold-read check that a plan needs no guessing |
 | `doc-writer` | Docs/changelog/README updates from diffs |
 
 See [`METHODOLOGY.md` — Subagent delegation](../../METHODOLOGY.md#4--subagent-delegation)

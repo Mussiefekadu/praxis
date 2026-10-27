@@ -6,7 +6,7 @@ description: >
   medium model by default; switch to large only for complex tasks.
   Manual only — /praxis:plan TXX.
 disable-model-invocation: true
-allowed-tools: Bash, Read, Grep, Glob, Edit, Write, Agent(praxis:explorer, praxis:web-researcher)
+allowed-tools: Bash, Read, Grep, Glob, Edit, Write, Agent(praxis:explorer, praxis:web-researcher, praxis:plan-reviewer)
 ---
 
 # /praxis:plan — Plan one atomic MVP task
@@ -18,7 +18,7 @@ You do **not** implement product code unless the user explicitly asks.
 
 > 💡 Model sizing is a **recommendation**, not a hard constraint — use the best
 > model you have access to for the task's complexity.
-> See hub [Model recommendations](../../README.md#model-recommendations).
+> See the Skills table in the Praxis README.
 
 ## Arguments
 
@@ -87,6 +87,11 @@ Write for a **junior / lesser-model executor**: no implied context.
 ### Tests to add
 - Table cases / scenarios …
 
+### AC coverage
+| Acceptance criterion | Covered by step(s) | Test |
+| -------------------- | ------------------ | ---- |
+| AC1 … | 2, 3 | … |
+
 ### Verify commands
 - …
 
@@ -100,14 +105,28 @@ Write for a **junior / lesser-model executor**: no implied context.
 - medium/small (default) | large — rationale: …
 ```
 
-Set Status to `Planned` only when a lesser agent could follow the plan cold.
-Append Status History row.
+### 4. Cold-read review (mandatory)
 
-### 4. Output to user
+Spawn `Agent(praxis:plan-reviewer)` with **only** the task file path — no
+summary, no context from this conversation. That isolation is the point: it
+reads the plan the way the executor will.
 
-Ready? / Key steps / AC / Execute model: medium(default)|large
+- **READY** → continue.
+- **GAPS** → fix each gap in the plan, then review again. At most **two**
+  review rounds.
+- Gaps left after round two → do **not** set `Planned`. List them for the user
+  and offer "Re-plan TXX" as the button instead of "Execute TXX".
 
-**Next-step button (mandatory):** do not tell the user to type the next command. End the turn with `mcp__ccd_turn__wrap_up` — `recap` = what is now true; `ask` = one short question; `actions[0]` = a reply with `label` "Execute TXX" and `message` `/praxis:execute TXX` (add a second reply "Re-plan" only if the plan has open questions). If `wrap_up` is unavailable (not the Claude desktop app), print the command on its own line instead.
+Record the outcome (`Plan review: READY` or the remaining gaps) under the
+Execution plan.
+
+Set Status to `Planned` only after the review is READY. Append Status History row.
+
+### 5. Output to user
+
+Ready? / Plan review / Key steps / AC / Execute model: medium(default)|large
+
+**Next-step button (mandatory):** do not tell the user to type the next command. End the turn with `mcp__ccd_turn__wrap_up` — `recap` = what is now true; `ask` = one short question; `actions[0]` = a reply with `label` "Execute TXX" and `message` `/praxis:execute TXX` (if gaps remain after review, the only button is "Re-plan TXX" → `/praxis:plan TXX`). If `wrap_up` is unavailable (not the Claude desktop app), print the command on its own line instead.
 
 ## Do not
 
@@ -115,3 +134,4 @@ Ready? / Key steps / AC / Execute model: medium(default)|large
 - Expand scope into later layers  
 - Mark INDEX `✅`  
 - Leave a hand-wavy plan that forces the execute model to re-design  
+- Set `Planned` without a READY plan review, or give the reviewer your own summary instead of the file path  

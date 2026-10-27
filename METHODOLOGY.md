@@ -107,7 +107,7 @@ flowchart LR
 | `/praxis:audit-rules`            | Periodically                    | —                                                                         | Read-only audit of rules/skills vs tree                                           |
 | `/praxis:status`                 | Returning to a project          | Small                                                                     | Read-only progress report; offers the next command as a button                    |
 
-> 💡 See [README: Model recommendations](README.md#model-recommendations) for which
+> 💡 See [README: Skills](README.md#-skills) for which
 > specific provider/models correspond to each size tier. These are **recommendations,**
 > not hard rules — use the best model you have access to for the task's complexity budget.
 
@@ -118,11 +118,11 @@ of doing it serially on the parent. The parent keeps decisions, design, and
 human interaction. Subagents are invoked via the `Agent` tool by name — e.g.
 `Agent(explorer)` — against the concrete roster defined at `.claude/agents/*.md`
 (shipped in the plugin's `agents/`). Model sizing (large/medium/small) is
-still a **class, not a specific alias** — see [Model recommendations](README.md#model-recommendations).
+still a **class, not a specific alias** — see [Model recommendations](README.md#-skills).
 
 **Delegation routing:**
 
-| Subagent (`.claude/agents/*.md`) | Purpose                                                                 | Used by                                    |
+| Subagent (plugin `agents/`)      | Purpose                                                                 | Used by                                    |
 | --------------------------------- | ------------------------------------------------------------------------ | ------------------------------------------- |
 | `explorer`                        | Find files, read code, trace calls, map architecture, verify facts       | grill-me, add-feature, bootstrap, plan      |
 | `web-researcher`                  | Fetch docs, check API references                                         | bootstrap (dep spokes), grill-me, plan      |
@@ -131,6 +131,7 @@ still a **class, not a specific alias** — see [Model recommendations](README.m
 | `test-runner`                     | Run tests, diagnose failures                                             | execute, complete (background)              |
 | `code-reviewer`                   | Correctness/lint/style/bug review of a diff                              | after execute and after dialectic edits     |
 | `verifier`                        | Skeptical independent check that claimed work is actually done           | after execute (background)                  |
+| `plan-reviewer`                   | Cold-read check that a plan needs no guessing                            | plan (before `Planned`)                     |
 | `doc-writer`                      | Docs/changelog/README updates from diffs                                 | complete, dialectic                         |
 
 Ad hoc multi-step shell work (a one-off grep, a build command) stays on the
@@ -205,7 +206,7 @@ task stubs, nothing assumed.
 ## 🔁 Running the loop
 
 After bootstrap or `/praxis:add-feature` produces tasks, the work loop is (see
-[README: Model recommendations](README.md#model-recommendations) for which
+[README: Skills](README.md#-skills) for which
 specific providers/models correspond to each size tier — these are recommendations):
 
 1. **Plan** (`/praxis:plan TXX`): medium by default; switch to large only for complex
@@ -252,6 +253,40 @@ The hub carries the full Rule Maintenance procedure (steps 0–7). Summary:
 5. **Contradictions / dedupe / decay / split** — rules stay alive
 
 Harness: `/praxis:learn` (also run from `/praxis:complete`).
+
+### 📕 Influence: Mao's *On Practice* (1937)
+
+The maintenance loop is deliberately patterned on Mao Zedong's Marxist epistemology in **"On Practice: On the Relation Between Knowledge and Practice, Between Knowing and Doing"** (July 1937) — written amid the Yan'an period, when the Chinese Communists were rebuilding strategy from lived struggle rather than importing ready-made formulas. The essay's argument is epistemological, not decorative: knowledge that never returns to practice becomes dogma; practice that never rises to theory stays a pile of anecdotes.
+
+**Primary text:** [marxists.org — Selected Works, Vol. 1, *On Practice*](https://www.marxists.org/reference/archive/mao/selected-works/volume-1/mswv1_16.htm)
+
+**Accessible overview:** [PolSci Institute — *On Practice*: Mao's Epistemology and Theory of Knowledge](https://polsci.institute/political-theory/mao-epistemology-theory-of-knowledge/)
+
+Mapped onto this workflow:
+
+| Idea from *On Practice*                                                                                     | How it shows up here                                                                                           |
+| ----------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| Knowledge begins in **practice** (contact with the thing); perceptual → rational                            | Hard debugging, failed attempts, and real code changes are the "perceptual" material — not invented principles |
+| Rational knowledge grasps **essence / internal relations**, not isolated incidents                          | Encode a **problem class** (root-cause pattern), discard session-only noise                                    |
+| Theory must **return to practice**; practice is the criterion of truth                                      | New rule entries must pass the cold-read check; stale entries decay or get struck                              |
+| Oppose **dogmatism** (formulas without practice) and **empiricism** (fragmentary experience without theory) | Don't paste bookish rules that never matched this codebase; don't leave one-off fixes only in chat history     |
+| *Practice, knowledge, again practice, and again knowledge* — an ascending spiral                            | Rules improve session by session; `/praxis:learn` is the deliberate turn of that spiral              |
+
+Closing line of the essay (the spiral of cognition):
+
+> Discover the truth through practice, and again through practice verify and develop the truth. … Practice, knowledge, again practice, and again knowledge. This form repeats itself in endless cycles, and with each cycle the content of practice and knowledge rises to a higher level.
+
+That is the philosophical warrant for treating `.claude/rules/` as a **material product of work on a stack** — not a static style guide dropped from outside.
+
+### 🧰 What `/praxis:learn` does (summary)
+
+Authority: Rule Maintenance in the installed `general.md`. Invoke manually after non-trivial sessions; `/praxis:complete` runs it as part of close-out.
+
+- **Mode A** — After qualifying debugging (>5 min, docs consulted, multiple attempts, or non-obvious root cause): extract class → route via the table in `general.md` → encode / verify / integrity checks into **the project's** `.claude/rules/*.md`.
+- **Mode B** — After structural code changes: ask whether any encoded pattern is now stale, incomplete, or contradicted; refine or add only what generalizes.
+- **Shared** — Prefer refining overlapping entries over proliferating duplicates; propose a human-approved split if a rule file exceeds ~600 lines (earlier if approaching ~550); timestamp `<!-- last-verified: YYYY-MM -->`; review entries older than six months when working in that domain.
+
+If Modes A/B find nothing: *"Nothing to capture — session was routine."*
 
 ---
 

@@ -61,11 +61,11 @@ Extract from every subagent (`.claude/agents/*.md`): frontmatter (`name`,
   Verify gate section (Go seeds in `planning/verify-SEED/` for Go projects)  
 - **Audience split:** named deps appear in both `.claude/rules/*.md` and README
   Dependencies & docs (flag one-sided coverage as `GAP`)  
-- **Subagent fidelity:** every `Agent(name)` referenced in a skill's `allowed-tools`
-  has a matching `.claude/agents/name.md` file → `BROKEN` if not; every shipped
-  subagent (explorer, web-researcher, implementer, refactorer, test-runner,
-  code-reviewer, verifier, doc-writer) still exists unless deliberately removed
-  by the human → `MISSING` if silently dropped by bootstrap  
+- **Subagent fidelity:** subagents ship with the plugin (`praxis:*`). The hub's
+  Subagent Roster lists the shipped set (explorer, web-researcher, implementer,
+  refactorer, test-runner, code-reviewer, verifier, plan-reviewer, doc-writer)
+  → `STALE` if it drifts; any project-added subagent named in the hub has a
+  matching `.claude/agents/name.md` → `BROKEN` if not  
 
 ## Phase 4 — Contradictions
 
