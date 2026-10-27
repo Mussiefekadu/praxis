@@ -329,6 +329,7 @@ for delegation rules (parallelize independent work, escalate on bad output, etc.
 | `/praxis:complete` | plugin skill `complete` | Verify + dialectic + INDEX ✅ + commit + push (default) + manual test + next branch |
 | `/praxis:learn` | plugin skill `learn` | Encode session learnings into rules |
 | `/praxis:audit-rules` | plugin skill `audit-rules` | Read-only audit of rules/skills vs tree |
+| `/praxis:status` | plugin skill `status` | Read-only progress report + next-step button |
 | `/praxis:grill-me` | plugin skill `grill-me` | Interrogate an idea over a design tree until shared understanding; feeds /praxis:add-feature |
 | `/praxis:add-feature` | plugin skill `add-feature` | New feature → context → phase stubs appended to INDEX |
 

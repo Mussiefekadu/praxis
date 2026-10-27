@@ -103,6 +103,10 @@ flowchart TD
     C -->|"push + Manual test + next branch"| P
 ```
 
+Coming back after a break? Run `/praxis:status` (or just ask "where was I?").
+It reports what's done, in progress or blocked, checks your branch, and offers
+the next command as a button.
+
 Every idea starts with the same grill: [`/praxis:grill-me`](METHODOLOGY.md#-grilling-between-idea-and-planning)
 interrogates it in rounds over a design tree (facts via sub-agents, decisions
 via the human) until a shared-understanding summary is confirmed — most
@@ -243,7 +247,7 @@ If Modes A/B find nothing: *"Nothing to capture — session was routine."*
 ```
 .
 ├── .claude-plugin/ ............... 🔌 plugin.json + marketplace.json
-├── skills/ ....................... 🧩 /praxis:* skills (init, grill-me, bootstrap, plan, execute, complete, …)
+├── skills/ ....................... 🧩 /praxis:* skills (init, status, grill-me, bootstrap, plan, execute, complete, …)
 ├── agents/ ....................... 🤖 Subagent roster
 ├── METHODOLOGY.md ................ 🧠 Why this works; entry points; work loop
 ├── templates/

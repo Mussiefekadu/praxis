@@ -1,6 +1,6 @@
 {
   "name": "praxis",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Grill an idea, bootstrap rules + phases, then plan → execute → complete one verifiable task at a time, delegating facts and mechanics to subagents.",
   "author": { "name": "Mussiefekadu" },
   "license": "MIT",

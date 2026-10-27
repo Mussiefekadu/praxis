@@ -105,6 +105,7 @@ flowchart LR
 | `/praxis:complete TXX`    | After execute                   | Medium or small                                                           | Re-verify; dialectic; INDEX → ✅; commit; push (default); Manual test; next branch |
 | `/praxis:learn` | End of hard sessions            | —                                                                         | Particular → general → encode into spokes                                         |
 | `/praxis:audit-rules`            | Periodically                    | —                                                                         | Read-only audit of rules/skills vs tree                                           |
+| `/praxis:status`                 | Returning to a project          | Small                                                                     | Read-only progress report; offers the next command as a button                    |
 
 > 💡 See [README: Model recommendations](README.md#model-recommendations) for which
 > specific provider/models correspond to each size tier. These are **recommendations,**
