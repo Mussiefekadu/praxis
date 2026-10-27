@@ -49,6 +49,10 @@ Praxis is a Claude Code plugin — works on Windows, macOS and Linux.
 /plugin install praxis@praxis
 ```
 
+**For a team:** install with `--scope project` (or pick *project* in `/plugin`).
+That writes `.claude/settings.json`; commit it and teammates are offered Praxis
+when they open the repo.
+
 Then, inside your project, run `/praxis:init`. It copies the rules hub, phase
 templates and seeds into your repo (never overwriting). Skills and subagents
 stay in the plugin and update with it.
