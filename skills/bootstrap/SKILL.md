@@ -62,20 +62,18 @@ extract the answers — do not re-ask for information already provided.
 5. If `.claude/rules/general.md` or `planning/phases/INDEX.md` is missing, run `/praxis:init` first.  
 6. Do not commit unless the user explicitly asks.  
 7. Do not implement product features. Specifically:
-   - NEVER create Go source files, `cmd/`, `internal/`, `pkg/`, or `migrations/`
-     directories. These belong to T01 via `/praxis:execute`.
-   - NEVER run `go mod init` or scaffold a Go module. T01 does that.
-   - In-scope (NOT product code): root Makefile, .golangci.yml, lefthook.yml,
-     .gitignore, README.md, .claude/rules/*.md,
+   - NEVER create application source files or source directories (e.g. `cmd/`,
+     `internal/`, `src/`, `migrations/`). These belong to T01 via `/praxis:execute`.
+   - NEVER initialize the app's module/package (`go mod init`, `npm init`,
+     `cargo new`, `uv init`, …). T01 does that.
+   - In-scope (NOT product code): verify gate files (task runner, lint config,
+     hook config), .gitignore, README.md, .claude/rules/*.md,
      planning/phases/INDEX.md + stubs.  
-8. Bootstrap AC requires **git repo + verify gate files present + lefthook installed**:
-   root `Makefile` with `verify` target (lint+test+build for Go), stack lint config,
-   and `lefthook install` succeeded. Seeds live under `templates/seeds/` (after install:
-   `planning/verify-SEED/`).
-   Seeds under `planning/` alone are **not** enough — adapted copies must land
-   at repo root + hooks installed. Go Makefiles must include `lint`, `test`,
-   `build`, multi-platform `build-all`, and `verify` (= lint+test+build).
-   **Do not require `make verify` to pass yet** — there is no source code.
+8. Bootstrap AC requires **git repo + verify gate files at repo root + hook
+   installed + hub Verify gate filled** (see step 5). The gate is chosen for the
+   user's stack; the Go seeds in `planning/verify-SEED/` are one example, not a
+   requirement for other stacks. Seeds under `planning/` alone are **not** enough.
+   **Do not require the verify command to pass yet** — there is no source code.
    T01 creates the skeleton; verify passes for the first time in T01.  
 9. Use the **stack the user specified** in the technical description. Do not
    silently substitute languages, frameworks, or toolchains. If the user
@@ -174,21 +172,27 @@ rm -f planning/README-SEED.md
 rm -f planning/gitignore-SEED
 ```
 
-### 5. Git repo + verify tooling + lefthook (bootstrap acceptance — mandatory)
+### 5. Git repo + verify gate (bootstrap acceptance — mandatory)
 
 1. If `.git` is missing: `git init` in the project root (empty repo / first commit
    later is fine). If `.git` already exists, leave it — do not destroy history.  
-2. **Ship the verify gate at project root** (adapt seeds; do not leave them only
-   under `planning/`):
-   - Prefer pack seeds: `templates/seeds/verify/` (after install:
-     `planning/verify-SEED/`) — `Makefile`, `lefthook.yml`, `golangci.yml` →
-     root as `Makefile`, `lefthook.yml`, `.golangci.yml` (rename for Go).  
-   - Root **`Makefile`** must expose **`verify`** that runs **lint + test**
-     (+ build when applicable). Document `make verify` and `make install-hooks`
-     in hub Build & Run **and** README.  
-   - Root **`lefthook.yml`**: pre-commit → `make verify` (not ad-hoc partial checks).  
-   - Stack lint config (Go: **`.golangci.yml`**). Adapt if non-Go; do not skip.  
-3. **Go projects (mandatory Makefile shape):** start from `seeds/verify/Makefile`
+2. **Choose the verify gate for this stack** and ship it at project root. Use the
+   stack's native tooling; a `Makefile` is optional outside Go. It must provide:
+   - **One verify command** that runs lint **and** test (+ build when the stack
+     builds) — e.g. `make verify`, `npm run verify`, `nox -s verify`, `just verify`.  
+   - **Lint config** for the stack's linter (e.g. `.golangci.yml`, `eslint.config.js`,
+     `ruff.toml` / `[tool.ruff]`, clippy settings).  
+   - **A pre-commit hook** that runs the verify command (lefthook, husky,
+     pre-commit, …). Only if the human explicitly declines a hook, record `none`
+     and that approval in the hub.  
+   Use the hub's "Typical shapes" table as the starting point; raise anything
+   unusual as a **Bootstrap concern**.  
+3. **Fill the hub's Verify gate section** in `.claude/rules/general.md`: verify,
+   lint, test, build commands, hook tool + config, and **Required files** (every
+   gate file execute/complete must find). No `{{placeholders}}` may remain there.
+   Document the verify command in hub Build & Run **and** README.  
+4. **Go projects (Makefile shape):** start from `planning/verify-SEED/Makefile`,
+   `lefthook.yml` and `golangci.yml` (→ root `.golangci.yml`)
    and keep (or equivalent) targets:
    - `lint` — golangci-lint  
    - `test` — `go test ./...`  
@@ -197,14 +201,16 @@ rm -f planning/gitignore-SEED
      amd64/arm64 by default; override `BINARY` / `MAIN_PKG` / `GOOS_LIST`)  
    - `verify` — `lint` + `test` + `build` (this is the gate; not `build-all`)  
    - `fmt`, `vet`, `clean`, `install-hooks`, `help`  
-   Adapt package paths (`MAIN_PKG`) to the real `cmd/` layout.  
-4. Run **`lefthook install`** (or `make install-hooks`) so hooks are active in
-   this clone.  
-5. Bootstrap AC **fails** if any of these files are missing, if `verify` target is not
-   lint+test(+build), or if hooks are not installed / do not invoke verify.
-   **Do not require `make verify` to pass** — the repo has no source code yet.
+   Adapt package paths (`MAIN_PKG`) to the real `cmd/` layout. For other stacks,
+   delete the Go seeds instead of copying them.  
+5. **Install the hook** in this clone (`lefthook install`, `npx husky init`,
+   `pre-commit install`, …).  
+6. Bootstrap AC **fails** if any required file is missing, if the verify command
+   is not lint+test(+build), if the hook is not installed / does not invoke
+   verify, or if the hub Verify gate still has placeholders.
+   **Do not require the verify command to pass** — the repo has no source code yet.
    T01 creates the skeleton; verify first passes in T01.  
-6. `/praxis:execute` and `/praxis:complete` must **hard-abort** when this tooling
+7. `/praxis:execute` and `/praxis:complete` must **hard-abort** when this tooling
    is later deleted — bootstrap must leave them unable to “pass” on tests alone.
 
 ### 6. Latest stable toolchain + packages (mandatory)
@@ -252,11 +258,13 @@ ignore file instead.
 2. Write `planning/phases/INDEX.md` with T01…Tnn
 
 **T01 is always the app boilerplate bootstrap task (L0 skeleton).**
-It creates the minimal runnable program so that `make verify` passes:
-- For a Go app: `go mod init`, `cmd/<name>/main.go` (minimal: flag or `fmt.Println`),
-  `internal/` directory tree (`doc.go` stubs), and the root Makefile verify target.
-- No business logic, no features — just the skeleton that compiles.
-- After T01, `make verify` must pass (lint + build + test on the skeleton).  
+It creates the minimal runnable program so that the verify command passes:
+- Initialize the module/package for the stack and add a minimal entry point
+  (e.g. Go: `go mod init`, `cmd/<name>/main.go`, `internal/` stubs; Node:
+  `package.json` + `src/index.ts`; Python: `pyproject.toml` + package dir).
+- At least one trivial test so the test step has something to run.
+- No business logic, no features — just the skeleton that builds.
+- After T01, the verify command must pass (lint + test + build on the skeleton).  
 3. Create each stub from the Praxis task template (Description, Requirements, AC, empty Execution plan section, Depends-on, Next, Layer)  
 4. Final task should be E2E / holistic verification  
 5. Early tasks should include verify wiring / sample test+lint green if scaffold exists  
@@ -291,9 +299,10 @@ humans changed — not only `.md` files).
 ### 7. Self-check
 
 - [ ] Routing Map ↔ rule files bijection  
-- [ ] Git repo exists; root `Makefile` has `verify` (lint+test); lint config present;
-      lefthook (or approved equivalent) installed and runs that verify on pre-commit
-      (note: `make verify` may fail — no source code yet; T01 makes it pass)  
+- [ ] Git repo exists; verify command (lint+test) wired at root; lint config present;
+      pre-commit hook installed and runs that verify (or `none`, human-approved)
+      (note: verify may fail — no source code yet; T01 makes it pass)  
+- [ ] Hub **Verify gate** section filled — no `{{placeholders}}` left  
 - [ ] Primary language (and other baseline tools) at **latest stable**; deps installed at current stables (or concern documented)  
 - [ ] Root `.gitignore` present (`.env`/variants, `tmp/`, stack artifacts — merged if pre-existing)  
 - [ ] Every provided dependency/docs set has a spoke with **Docs (if stuck)** URL + README row  
@@ -308,7 +317,7 @@ humans changed — not only `.md` files).
 - [ ] No product source code created (no `cmd/`, `internal/`, `pkg/`, `migrations/`)  
 - [ ] Installer leftovers cleaned (no `_TEMPLATE.md`, `verify-SEED/`, `README-SEED.md`, `gitignore-SEED` under `planning/`)  
 - [ ] `/praxis:add-feature` listed in hub skills inventory  
-- [ ] T01 is the app skeleton bootstrap task (module init, main.go, directory tree, `make verify` passes)  
+- [ ] T01 is the app skeleton bootstrap task (module init, entry point, one trivial test, verify passes)  
 
 ### 8. Output to user
 
@@ -334,9 +343,10 @@ humans changed — not only `.md` files).
 
 ### Git / hooks
 - git: initialized | already present
-- Makefile verify: present → `make verify` (= lint + test + build); Go also has `build-all`
-- lint config: .golangci.yml | <stack> | MISSING (fail)
-- lefthook: configured + installed → pre-commit runs make verify
+- verify command: `<command>` (= lint + test + build when applicable)
+- lint config: <file> | MISSING (fail)
+- hook: <tool> configured + installed → pre-commit runs verify | none (human-approved)
+- hub Verify gate: filled | placeholders left (fail)
 - seeds: `templates/seeds/` → `planning/*-SEED*` → adapted to root
 - toolchain: {{LANGUAGE}} <version> (latest stable) | pinned concern: …
 - packages: latest stable baseline | concern: …
@@ -359,7 +369,7 @@ Confirm architecture + layer order + README, then use the button.
 - Start `/praxis:execute` unless the user explicitly chains it  
 - Invent PBIs outside `planning/phases` unless the repo already uses another backlog and the user asks to bridge  
 - Copy secrets from references into the repo  
-- Skip git init / Makefile verify / lefthook and call bootstrap done  
+- Skip git init / the verify command / the hook / the hub Verify gate and call bootstrap done  
 - Leave verify seeds only under `planning/` without copying adapted files to project root  
 - Leave any "Praxis" reference in `.claude/rules/general.md` (the skill inventory listing `bootstrap` is the only exception)
 - State stack choices as methodology preferences — state them as facts  

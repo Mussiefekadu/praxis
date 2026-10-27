@@ -157,8 +157,8 @@ Combined with the hub's routing map, the evolving `.claude/rules/*.md` files are
 - ✅ **INDEX Status** uses `✅` when complete (not the word `Done` in the INDEX column).
 - 🚫 Product **features** are out of scope for bootstrap; bootstrap produces rules +
   phases + skills wiring + dependency spokes from docs + human `README.md` +
-  `.gitignore` + **root verify gate** (Makefile / lefthook / lint config; not the app itself).
-- 🧪 Execute/complete **fail closed** if verify tooling is missing — `go test` alone is not green.
+  `.gitignore` + **root verify gate** (verify command + lint config + pre-commit hook for your stack; not the app itself).
+- 🧪 Execute/complete **fail closed** if verify tooling is missing — unit tests alone are not green.
 - 👥 **Rules/skills = agents; README = humans** — both evolve; keep Dependencies & docs
   and architecture narrative aligned with `.claude/rules/` as the project grows.
 
@@ -191,17 +191,16 @@ The hub also carries always-on cores that dialectic does **not** replace:
 2. ♻️ **Rule Maintenance** — dialectic of cognition steps 0–7  
 3. 🛡️ **Safety / Workflow Rails** — no-gos, verification defaults, commit/push policy  
 
-- `/praxis:execute` and `/praxis:complete` must run `make verify` and hard-abort if verify
-  tooling is missing (Makefile, lint config, lefthook pre-commit→verify). Package tests alone
-  are not the gate.
+- `/praxis:execute` and `/praxis:complete` run the project's **verify command** (declared in
+  the hub's Verify gate section) and hard-abort if it, its lint config or its pre-commit hook
+  is missing. Package tests alone are not the gate.
 - `/praxis:complete` **pushes** the completed branch by default (`--no-push` to skip) and always
   emits a **Manual test** section (or `Nothing to test` + why).
-- `/praxis:bootstrap` creates the verify gate from seed files (Makefile, lint config, lefthook),
-  using latest stable toolchain versions. For Go projects, the seed Makefile includes
-  `lint`, `test`, `build`, `build-all` (multi-platform), and `verify` (= lint+test+build).
-  Bootstrap ships this to the project root (from `templates/seeds/verify/` →
-  `planning/verify-SEED/` after install — bootstrap must still copy/adapt to
-  **repo root** + `lefthook install`).
+- `/praxis:bootstrap` picks a verify gate for your stack — e.g. `make verify` (Go),
+  `npm run verify` (Node), `nox -s verify` (Python), `just verify` (Rust) — with a lint config
+  and a pre-commit hook, at latest stable toolchain versions, and records it in the hub.
+  Go projects start from the bundled seeds (`Makefile` with `lint`, `test`, `build`,
+  multi-platform `build-all`, `verify`; `lefthook.yml`; `.golangci.yml`).
 
 See [`METHODOLOGY.md`](METHODOLOGY.md)
 
@@ -248,7 +247,7 @@ If Modes A/B find nothing: *"Nothing to capture — session was routine."*
 ├── agents/ ....................... 🤖 Subagent roster
 ├── METHODOLOGY.md ................ 🧠 Why this works; entry points; work loop
 ├── templates/
-│   ├── seeds/ .................... 🌱 readme · gitignore · verify (Makefile / lefthook / golangci)
+│   ├── seeds/ .................... 🌱 readme · gitignore · verify (Go example: Makefile / lefthook / golangci)
 │   ├── rules/ .................... 📜 Generic `general.md` + example domain spoke
 │   └── phases/ ................... 🗂️ INDEX.md skeleton + TXX-template.md
 ```

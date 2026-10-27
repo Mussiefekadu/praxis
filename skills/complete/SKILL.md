@@ -45,19 +45,18 @@ Examples:
 2. Do not invent downstream scope; only fix stale assumptions in later stubs.  
 3. INDEX completed status is **`✅`** — never write `Done` in the INDEX Status column.  
 4. **Re-run the full lint + test (verify) suite** before marking complete or
-   committing. Prefer **`make verify`**. Auto-fix first; remaining lint failures
-   block close-out.  
-4a. **Verify tooling presence (hard abort):** Same as `/praxis:execute` — require
-    root `Makefile` with `verify` (lint+test), stack lint config (Go: `.golangci.yml`),
-    and `lefthook.yml` (pre-commit → verify). If missing: **stop** — do not mark ✅,
-    do not commit, do not push. Tell the user to restore verify tooling first.
+   committing, using the hub's **Verify gate** command. Auto-fix first; remaining
+   lint failures block close-out.  
+4a. **Verify tooling presence (hard abort):** same check as `/praxis:execute`
+    (step 2 below). If anything is missing: **stop** — do not mark ✅, do not
+    commit, do not push. Tell the user to restore verify tooling first.
     Never treat package tests alone as the complete gate.  
 5. Commit is **part of this skill** when the user invoked `/praxis:complete`:  
    - Never update git config  
    - Never `--trailer` / Co-authored-by  
    - Never force-push  
    - Do not commit secrets  
-   - Prefer committing only when pre-commit (lefthook) would also pass  
+   - Prefer committing only when the declared pre-commit hook would also pass  
 6. **Push by default** after a successful commit (`git push -u origin HEAD`
    when upstream is unset). Skip push only if **`--no-push`** was provided.  
 7. Close-out **must** include a **Manual test** section (commands + what to
@@ -83,17 +82,18 @@ If not on the current stub-stem branch, warn and checkout/create it — do not c
 
 ### 2. Verify gate (mandatory)
 
-**Presence check first** (fail closed):
+**Presence check first** (fail closed). Read the **Verify gate** section of
+`.claude/rules/general.md`, then:
 
-```bash
-test -f Makefile && grep -q '^verify' Makefile
-test -f lefthook.yml
-test -f .golangci.yml   # Go
-make verify
-```
+1. If the section is missing or still has `{{…}}` placeholders → stop.
+2. Every path under **Required files** exists (`test -f <path>` for each).
+3. The **Verify command** runs lint **and** test — not tests alone.
+4. If a pre-commit hook is declared, its config file exists and invokes the
+   verify command. `none` is acceptable only when the hub says the human approved it.
+5. Run the verify command.
 
 If tooling is missing: stop — do not dialectic-mark-complete, commit, or push.
-Re-run **`make verify`**. If it fails: stop — send back to execute/fix.
+If verify fails: stop — send back to execute/fix.
 
 Record results in the task **Verification** section if not already current.
 
@@ -128,7 +128,7 @@ EOF
 )"
 ```
 
-Pre-commit hooks (lefthook) should run verify; if the hook fails, fix and create
+The declared pre-commit hook should run verify; if the hook fails, fix and create
 a **new** commit — do not `--no-verify` unless the user explicitly overrides.
 
 ### 7. Push (default)
@@ -203,7 +203,7 @@ button → /praxis:plan TYY
 - Write `Done` into the INDEX Status column  
 - Skip dialectic when triggers fired  
 - Skip lint+test verify  
-- Close out when Makefile / lefthook / lint config are missing (presence abort)  
+- Close out when the hub's Verify gate or its required files are missing (presence abort)  
 - Use `--no-verify` / skip hooks without explicit user approval  
 - Skip the default push when `--no-push` was **not** set and `origin` exists  
 - Force-push  

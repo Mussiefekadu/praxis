@@ -101,7 +101,7 @@ flowchart LR
 | `/praxis:bootstrap`    | New project                     | Large                                                                     | Goal → rules + phases + README + verify gate                                      |
 | `/praxis:add-feature`            | New feature in existing project | Large                                                                     | Context → new phase stubs appended to INDEX                                       |
 | `/praxis:plan TXX`        | Before coding                   | Medium (large only for complex tasks)                                     | Reality-check; handoff-ready plan for execute agent                               |
-| `/praxis:execute TXX`     | After plan                      | Medium or small                                                           | Follow plan until AC pass; `make verify`; do not mark INDEX ✅                     |
+| `/praxis:execute TXX`     | After plan                      | Medium or small                                                           | Follow plan until AC pass; run the verify command; do not mark INDEX ✅          |
 | `/praxis:complete TXX`    | After execute                   | Medium or small                                                           | Re-verify; dialectic; INDEX → ✅; commit; push (default); Manual test; next branch |
 | `/praxis:learn` | End of hard sessions            | —                                                                         | Particular → general → encode into spokes                                         |
 | `/praxis:audit-rules`            | Periodically                    | —                                                                         | Read-only audit of rules/skills vs tree                                           |
@@ -212,7 +212,7 @@ specific providers/models correspond to each size tier — these are recommendat
    redesigning — paths, verify steps, tests, commands, pitfalls.
 
 2. **Execute** (`/praxis:execute TXX`): medium or small. If the plan is thorough,
-   medium is usually sufficient. Follow the plan exactly. Run `make verify`.
+   medium is usually sufficient. Follow the plan exactly. Run the project's verify command.
    Hard-abort if it fails.
 
 3. **Complete** (`/praxis:complete TXX`): medium or small. The harder the execution
@@ -273,8 +273,9 @@ These are the defaults Praxis ships in its seeds. When bootstrapping a target
 project, **replace** these with the user's actual choices — do not copy this into
 the target repo.
 
-- **Verify gate**: root `Makefile` with `verify` target (lint + test + build),
-  lint config, lefthook pre-commit → verify
+- **Verify gate**: one verify command (lint + test + build), lint config, and a
+  pre-commit hook that runs it — declared in the hub's Verify gate section. Go seeds:
+  `Makefile` + `.golangci.yml` + `lefthook.yml`
 - **Toolchain**: latest stable for the project's language; document pins as concerns
 - **Gitignore**: always `.env*` + `tmp/` + stack-specific artifacts
 - **Commit policy**: `/praxis:complete` pushes by default (`--no-push` to skip);
@@ -295,7 +296,7 @@ the target repo.
 ## ✅ Success criteria for a bootstrap
 
 - Hub retains Karpathy Behavioral Guidelines + Rule Maintenance 0–7 + Safety / Workflow Rails
-- Git repo + root `Makefile` with `verify` target + lint config + lefthook installed
+- Git repo + verify command + lint config + pre-commit hook installed, and the hub Verify gate filled
 - Primary language at latest stable (or pinned older version documented as concern)
 - Every named dependency has a `.claude/rules/*.md` spoke with docs URL
 - Root `README.md` present (banner + summary + TOC + emoji headers)

@@ -47,17 +47,18 @@ Extract from every subagent (`.claude/agents/*.md`): frontmatter (`name`,
   (four sections), **Project Architecture**, **Delivery Principles**, and
   **Rule Maintenance** steps **0–7**. If bootstrap stripped these → `MISSING` /
   dilution gap  
-- **Hooks:** lefthook (or documented equivalent) present and wired to lint+test;
-  root `Makefile` with `verify`; stack lint config present — flag absence as `BROKEN`
+- **Verify gate:** hub Verify gate section filled (no placeholders); every
+  Required file present; pre-commit hook wired to the verify command (or `none`,
+  human-approved) — flag absence as `BROKEN`
   (execute/complete must hard-abort)  
 - **Complete skill:** `/praxis:complete` documents push-by-default, `--no-push`,
   and mandatory Manual test / Nothing to test handoff; verify **presence** abort  
 - **Execute skill:** `/praxis:execute` documents the same verify presence abort  
-- **Bootstrap skill:** prefers latest stable Go + package baselines; creates
+- **Bootstrap skill:** prefers latest stable toolchain + package baselines; creates
   dependency/docs spokes with official URLs; creates human `README.md`; creates
-  stack-appropriate `.gitignore`; ships verify gate (Makefile + lint config +
-  lefthook) to project root from `templates/seeds/verify/` /
-  `planning/verify-SEED/` (Go Makefile includes multi-platform `build-all`)  
+  stack-appropriate `.gitignore`; ships a stack-appropriate verify gate (verify
+  command + lint config + pre-commit hook) to project root and fills the hub
+  Verify gate section (Go seeds in `planning/verify-SEED/` for Go projects)  
 - **Audience split:** named deps appear in both `.claude/rules/*.md` and README
   Dependencies & docs (flag one-sided coverage as `GAP`)  
 - **Subagent fidelity:** every `Agent(name)` referenced in a skill's `allowed-tools`

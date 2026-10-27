@@ -36,7 +36,7 @@ Also obey the **Project constraints** section of `.claude/rules/general.md`.
 3. Execution plan steps must use `→ verify:` pairs (Goal-Driven Execution).  
 4. **Handoff fidelity:** the plan must be technically detailed enough for a
    smaller execute model (see hub “Model split”). Vague plans are not done.  
-5. Prefer verification commands already used in the hub (`make verify`, tests, etc.).
+5. Use the hub's **Verify gate** command plus targeted tests for verification.
    Plans must include **lint + test** gates and **tests for new code**.  
 6. Study references listed in the stub; **reimplement** — do not vendor forbidden trees.  
 7. Respect the project’s stack, platform, and packaging decisions as stated in the hub

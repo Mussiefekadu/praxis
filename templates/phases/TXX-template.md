@@ -61,7 +61,7 @@
 
 - {{How to prove this task without needing later layers}}
 - Commands: `{{VERIFY}}` (must include **lint + tests**)
-- New code: tests required (Go: table-driven)
+- New code: tests required (stack's idiomatic style)
 
 ## Acceptance Criteria
 

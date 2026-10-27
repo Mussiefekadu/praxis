@@ -98,7 +98,7 @@ When a task spans multiple areas, read every applicable rule file before startin
 - **Shape**: {{SHAPE}}
 - **Platforms**: {{OS_LIST}}
 - **Primary language**: {{LANGUAGE_VERSION}}
-- **Build / verify**: {{VERIFY_COMMANDS}}
+- **Build / verify**: `{{VERIFY_COMMAND}}` (see [Verify gate](#verify-gate))
 
 ```
 {{REPO_TREE_SKETCH}}
@@ -115,6 +115,28 @@ When a task spans multiple areas, read every applicable rule file before startin
 ```bash
 {{BUILD_RUN_SNIPPET}}
 ```
+
+### Verify gate
+
+<!-- BOOTSTRAP: fill every field for this stack. /praxis:execute and /praxis:complete read this section and stop if it is missing or still has {{placeholders}}. -->
+
+| Field | Value |
+| ----- | ----- |
+| **Verify command** | `{{VERIFY_COMMAND}}` — one command that runs lint **and** test (+ build when the stack builds) |
+| Lint | `{{LINT_COMMAND}}` (config: `{{LINT_CONFIG}}`) |
+| Test | `{{TEST_COMMAND}}` |
+| Build | `{{BUILD_COMMAND}}` \| n/a |
+| Pre-commit hook | `{{HOOK_TOOL}}` (config: `{{HOOK_CONFIG}}`) runs the verify command \| `none` (human-approved) |
+| Required files | {{VERIFY_FILES}} — each must exist at the repo root |
+
+Package tests alone are never the gate. Typical shapes (pick one, or the stack's own equivalent):
+
+| Stack | Verify command | Lint / test | Hook |
+| ----- | -------------- | ----------- | ---- |
+| Go | `make verify` | golangci-lint / `go test ./...` | lefthook |
+| Node / TS | `npm run verify` | eslint (+ `tsc --noEmit`) / vitest or jest | husky or lefthook |
+| Python | `make verify` or `nox -s verify` | ruff (+ mypy) / pytest | pre-commit |
+| Rust | `just verify` or `make verify` | `cargo clippy -- -D warnings` / `cargo test` | lefthook or pre-commit |
 
 ---
 
@@ -134,7 +156,8 @@ advance to the next layer on a broken base.
 ### Atomic work + verification gates
 
 Prefer small, independently checkable units. Before calling a chunk done, run
-the cheapest proof that fits (`{{VERIFY_COMMANDS}}`, package tests, manual path).
+the cheapest proof that fits (package tests, manual path), and the full
+`{{VERIFY_COMMAND}}` before a task is called done.
 
 ### Model split: expensive plan → cheap execute
 
@@ -174,7 +197,7 @@ NEVER do these without explicit user approval:
 
 ### Verification defaults
 
-- Prefer `{{VERIFY_COMMANDS}}` after substantive edits
+- Prefer `{{VERIFY_COMMAND}}` after substantive edits
 - If verification fails, fix that layer — do not advance
 
 ---

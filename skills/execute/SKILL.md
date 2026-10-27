@@ -38,16 +38,13 @@ Also obey the **Project constraints** section of `.claude/rules/general.md`.
    (Think Before Coding, Simplicity First, Surgical Changes, Goal-Driven Execution).
    Do not treat "surgical" as the only rule.  
 2. Read matching domain spokes before editing those areas.  
-3. **New code requires tests** in this task (Go: table-driven).  
-4. **Run the full lint + test (verify) suite** before claiming AC passed.
-   Prefer **`make verify`**. Auto-fix first; fail only on remaining unfixable issues.  
-5. **Verify tooling presence (hard abort):** Before claiming AC passed, confirm:
-   - Root `Makefile` with a `verify` target that runs **lint + test** (+ build when applicable)
-   - Lint config when the stack expects it (Go: `.golangci.yml`)
-   - `lefthook.yml` (or approved equivalent) with **pre-commit → that verify**
-   If any are missing: **stop**, Status `Blocked` (or refuse handoff), tell the user to
-   restore verify tooling — do **not** treat `go test ./...` (or unit tests alone) as
-   "lint+test green."  
+3. **New code requires tests** in this task, in the stack's idiomatic style
+   (e.g. table-driven in Go, parametrized in pytest).  
+4. **Run the project's verify command** (hub → **Verify gate**) before claiming
+   AC passed. Auto-fix first; fail only on remaining unfixable issues.  
+5. **Verify tooling presence (hard abort):** run the presence check in step 3
+   below. If anything is missing: **stop**, Status `Blocked`, and tell the user to
+   restore verify tooling — do **not** treat unit tests alone as "lint+test green."  
 6. Never vendor forbidden reference trees.  
 7. Do not commit unless the user explicitly asked (complete commits + pushes on close-out).  
 8. Only one phase task InProgress unless human approved parallel work.
@@ -79,20 +76,19 @@ Log Status History.
 
 ### 3. Verify gate (mandatory)
 
-**Presence check first** (fail closed):
+**Presence check first** (fail closed). Read the **Verify gate** section of
+`.claude/rules/general.md`, then:
 
-```bash
-test -f Makefile && grep -q '^verify' Makefile
-test -f lefthook.yml   # or documented equivalent
-test -f .golangci.yml  # Go projects
-make verify
-```
+1. If the section is missing or still has `{{…}}` placeholders → stop.
+2. Every path under **Required files** exists (`test -f <path>` for each).
+3. The **Verify command** runs lint **and** test — not tests alone.
+4. If a pre-commit hook is declared, its config file exists and invokes the
+   verify command. `none` is acceptable only when the hub says the human approved it.
+5. Run the verify command.
 
-If `Makefile` / `verify` / `lefthook.yml` (or lint config for this stack) is missing:
-stop — Status `Blocked`; do **not** hand off as passed with only package tests.
-
-Run **`make verify`** (lint + tests + build when wired). Record commands and outcomes
-in **Verification**. If verify fails: fix or set Status `Blocked`.
+If any check fails: stop — Status `Blocked`; do **not** hand off as passed with
+only package tests. Record the verify command and its outcome in
+**Verification**. If verify fails: fix or set Status `Blocked`.
 
 **Post-edit checks (when subagents are available):** after non-trivial edits,
 launch `Agent(code-reviewer)`, `Agent(test-runner)`, and `Agent(verifier)`
@@ -139,4 +135,4 @@ button → /praxis:complete TXX
 - Mark INDEX `✅` without `/praxis:complete`  
 - Write `Done` into the INDEX Status column  
 - Skip tests or skip the lint+test verify gate  
-- Treat package tests alone as full verify when Makefile / lefthook / lint config are missing  
+- Treat package tests alone as full verify when the hub's Verify gate is missing or its required files are absent  
